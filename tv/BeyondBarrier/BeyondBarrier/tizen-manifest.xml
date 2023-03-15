@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns="http://tizen.org/ns/packages" api-version="7.0" package="org.tizen.example.BeyondBarrier" version="1.0.0">
+  <profile name="common" />
+  <service-application appid="org.tizen.example.BeyondBarrier"
+					exec="BeyondBarrier.dll"
+					type="dotnet"
+					multiple="false"
+					taskmanage="false"
+					nodisplay="true"
+                    api-version="10">
+    <label>BeyondBarrier</label>
+    <icon>BeyondBarrier.png</icon>
+  </service-application>
+</manifest>

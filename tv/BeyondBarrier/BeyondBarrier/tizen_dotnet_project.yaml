@@ -1,0 +1,9 @@
+# csproj file path
+csproj_file: BeyondBarrier.csproj
+
+# files monitored for dirty/modified status
+files:
+  - BeyondBarrier.csproj
+  - BeyondBarrier_App.cs
+  - tizen-manifest.xml
+  - shared/res/BeyondBarrier.png
