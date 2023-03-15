@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Flask Basic</title>
+</head>
+<body>
+
+    Hello {{name}}
+    
+    <button id="getData">Get Data</button>
+    
+    <div class="result"></div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $("#getData").click(function() {
+                $.getJSON("/people", function(data) {
+                    console.log(data);
+                    var tag = "<p>alice : " + data.alice + "</p>";
+                        tag += "<p>jin : " + data.jin + "</p>";
+                    $(".result").html(tag);
+                })
+            })
+        })
+    </script>
+
+</body>
+</html>
