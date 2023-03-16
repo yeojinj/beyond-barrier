@@ -303,7 +303,7 @@ def hello():
 
 
 # upload an image file
-@app.route("/imageupload", methods=['POST'])
+@app.route("/imagecaption", methods=['POST'])
 def upload_image():
     if (request.method == 'POST'):
         f = request.files['file']
