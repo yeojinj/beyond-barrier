@@ -1,1 +1,7 @@
+spring:
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/beyondb?characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: root
 
