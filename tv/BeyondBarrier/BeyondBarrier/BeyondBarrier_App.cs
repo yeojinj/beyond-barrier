@@ -1,4 +1,5 @@
 ﻿using Tizen.Applications;
+using Tizen;
 
 namespace BeyondBarrier
 {
@@ -7,6 +8,7 @@ namespace BeyondBarrier
         protected override void OnCreate()
         {
             base.OnCreate();
+            Log.info("BB_check", "BeyondBarrier Service Created");
         }
 
         protected override void OnAppControlReceived(AppControlReceivedEventArgs e)
