@@ -18,3 +18,6 @@ logging:
       springframework: DEBUG
       hibernate:
         SQL: DEBUG
+
+server:
+  port: 5000
