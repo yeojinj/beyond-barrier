@@ -1,5 +1,9 @@
 from flask import *
 import os
+
+# Select GPU Device
+# os.environ["CUDA_VISIBLE_DEVICES"] = '5'
+
 from huggingface_hub import hf_hub_download
 coco_weight = hf_hub_download(repo_id="akhaliq/CLIP-prefix-captioning-COCO-weights", filename="coco_weights.pt")
 import clip
@@ -17,11 +21,32 @@ import PIL.Image
 
 ##### logo_detection start
 
-logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='flask_server/best.pt', _verbose=False)
+
+######################## SELECT #######################
+
+##### (1) GPU Server 모델 설정
+# logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='flask_server/best.pt', _verbose=False)
+
+##### (2) Local Server 모델 설정
+logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best.pt', _verbose=False)
+
+#######################################################
+
 logo_model.cuda()
 
 def logodetect(img):
-    im1 = PIL.Image.open(img)  # PIL image
+    
+    ######################## SELECT #######################
+    
+    ##### (1) S3 link를 이용하여 load
+    image = io.imread(img)
+    im1 = PIL.Image.fromarray(image)    # PIL image
+    
+    ##### (2) Image File을 load
+    # im1 = PIL.Image.open(img)  # PIL image
+    
+    #######################################################
+    
     results = logo_model(im1) # batch of images
     return results.pandas().xyxy[0].to_json()
 
@@ -47,7 +72,6 @@ D = torch.device
 CPU = torch.device('cpu')
 
 
-
 def get_device(device_id: int) -> D:
     if not torch.cuda.is_available():
         return CPU
@@ -56,6 +80,7 @@ def get_device(device_id: int) -> D:
 
 
 CUDA = get_device
+
 
 class MLP(nn.Module):
 
@@ -113,7 +138,6 @@ class ClipCaptionPrefix(ClipCaptionModel):
         
 
 #@title Caption prediction
-
 def generate_beam(model, tokenizer, beam_size: int = 5, prompt=None, embed=None,
                   entry_length=67, temperature=1., stop_token: str = '.'):
 
@@ -237,10 +261,12 @@ def generate2(
 
     return generated_list[0]
     
+    
 is_gpu = True 
 device = CUDA(0) if is_gpu else "cpu"
 clip_model, preprocess = clip.load("ViT-B/32", device=device, jit=False)
 tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
+
 
 def inference(img):
     print("start inference")
@@ -273,31 +299,51 @@ def inference(img):
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def hello():
     return "Hello Flask"
 
 
 # upload an image file
-@app.route("/imageUpload", methods=['POST'])
-def upload_image():
+@app.route("/imagecaption", methods=['POST'])
+def image_caption():
     if (request.method == 'POST'):
         f = request.files['file']
-        f.save('flask_server/static/' + f.filename)
-        result = inference('flask_server/static/' + f.filename)
+        
+        ######################## SELECT #######################
+        
+        ##### (1) GPU Server 폴더 구조
+        # f.save('flask_server/static/imagecaption/' + f.filename)
+        # result = inference('flask_server/static/imagecaption/' + f.filename)
+        
+        ##### (2) Local Server 폴더 구조
+        f.save('./static/imagecaption/' + f.filename)
+        result = inference('./static/imagecaption/' + f.filename)
+        
+        #######################################################
         return result
-
     
-@app.route("/logoDetect", methods=['POST'])
+    
+@app.route("/logodetect", methods=['POST'])
 def logo_detect():
     if (request.method == 'POST'):
         f = request.files['file']
-        f.save('flask_server/static/' + f.filename)
-        result = logodetect('flask_server/static/' + f.filename)
+        
+        ######################## SELECT #######################
+        
+        ##### (1) GPU Server 폴더 구조
+        # f.save('flask_server/static/logodetect' + f.filename)
+        # result = logodetect('flask_server/static/logodetect' + f.filename)
+        
+        ##### (2) Local Server 폴더 구조
+        f.save('./static/logodetect/' + f.filename)
+        result = logodetect('./static/logodetect/' + f.filename)
+        
+        #######################################################
         return result
     
     
-
 # returns a piece of data in JSON format
 @app.route("/people")
 def people():
@@ -311,5 +357,31 @@ def user(username):
     return render_template('profile.html', name=username)
 
 
+# send URL to get an image captioning result
+@app.route("/s3/imagecaption", methods=['POST'])
+def s3_image_caption():
+    req = request.json
+    address = req['address']
+    result = inference(address)
+    return result
+
+
+# send URL to get an logo detection result
+@app.route("/s3/logodetect", methods=['POST'])
+def s3_logo_detection():
+    req = request.json
+    address = req['address']
+    result = logodetect(address)
+    return result
+
+
 # run was
-app.run(host='70.12.130.121', port='5000', debug=True)
+######################## SELECT #######################
+
+##### (1) GPU Server
+# app.run(host='70.12.130.121', port='5000', debug=True)
+
+##### (2) Local Server
+app.run(port='5000', debug=True)
+
+#######################################################

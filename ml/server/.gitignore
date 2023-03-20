@@ -1,0 +1,5 @@
+# 가상 환경 설정 폴더
+/mlserver
+
+# 도커 파일 임시 제외
+Dockerfile
