@@ -307,7 +307,7 @@ def hello():
 
 # upload an image file
 @app.route("/imagecaption", methods=['POST'])
-def upload_image():
+def image_caption():
     if (request.method == 'POST'):
         f = request.files['file']
         
