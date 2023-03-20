@@ -4,7 +4,7 @@ import os
 
 ######################## SELECT #######################
 # Select GPU Device
-# os.environ["CUDA_VISIBLE_DEVICES"] = '5'
+os.environ["CUDA_VISIBLE_DEVICES"] = '5'
 #######################################################
 
 
@@ -28,10 +28,10 @@ import PIL.Image
 ######################## SELECT #######################
 
 ##### (1) GPU Server 모델 설정
-# logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='flask_server/best.pt', _verbose=False)
+logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='server/best.pt', _verbose=False)
 
 ##### (2) Local Server 모델 설정
-logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best.pt', _verbose=False)
+# logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best.pt', _verbose=False)
 
 #######################################################
 
@@ -160,10 +160,10 @@ class ClipCaptionModel(nn.Module):
         # (3) 
         # start = time.time()
         if prefix_length > 10:  # not enough memory
-            print("(3-1)")
+            # print("(3-1)")
             self.clip_project = nn.Linear(prefix_size, self.gpt_embedding_size * prefix_length)
         else:
-            print("(3-2)")
+            # print("(3-2)")
             self.clip_project = MLP((prefix_size, (self.gpt_embedding_size * prefix_length) // 2, self.gpt_embedding_size * prefix_length))
 
         # end = time.time()
@@ -357,12 +357,12 @@ def image_caption():
         ######################## SELECT #######################
         
         ##### (1) GPU Server 폴더 구조
-        # f.save('flask_server/static/imagecaption/' + f.filename)
-        # result = inference('flask_server/static/imagecaption/' + f.filename)
+        f.save('server/static/imagecaption/' + f.filename)
+        result = inference('server/static/imagecaption/' + f.filename)
         
         ##### (2) Local Server 폴더 구조
-        f.save('./static/imagecaption/' + f.filename)
-        result = inference('./static/imagecaption/' + f.filename)
+        # f.save('./static/imagecaption/' + f.filename)
+        # result = inference('./static/imagecaption/' + f.filename)
         
         #######################################################
         return result
@@ -376,12 +376,12 @@ def logo_detect():
         ######################## SELECT #######################
         
         ##### (1) GPU Server 폴더 구조
-        # f.save('flask_server/static/logodetect' + f.filename)
-        # result = logodetect('flask_server/static/logodetect' + f.filename)
+        f.save('server/static/logodetect' + f.filename)
+        result = logodetect('server/static/logodetect' + f.filename)
         
         ##### (2) Local Server 폴더 구조
-        f.save('./static/logodetect/' + f.filename)
-        result = logodetect('./static/logodetect/' + f.filename)
+        # f.save('./static/logodetect/' + f.filename)
+        # result = logodetect('./static/logodetect/' + f.filename)
         
         #######################################################
         return result
@@ -422,9 +422,9 @@ def s3_logo_detection():
 ######################## SELECT #######################
 
 ##### (1) GPU Server
-# app.run(host='70.12.130.121', port='5000', debug=True)
+app.run(host='70.12.130.121', port='5000', debug=True)
 
 ##### (2) Local Server
-app.run(port='5000', debug=True)
+# app.run(port='5000', debug=True)
 
 #######################################################
