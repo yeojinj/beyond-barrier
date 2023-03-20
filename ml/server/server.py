@@ -1,5 +1,9 @@
 from flask import *
 import os
+
+# Select GPU Device
+# os.environ["CUDA_VISIBLE_DEVICES"] = '5'
+
 from huggingface_hub import hf_hub_download
 coco_weight = hf_hub_download(repo_id="akhaliq/CLIP-prefix-captioning-COCO-weights", filename="coco_weights.pt")
 import clip
@@ -292,7 +296,6 @@ def inference(img):
 # file_path = sys.argv[1]
 # file_path = "elephant.png"
 # print(inference(file_path))
-
 
 app = Flask(__name__)
 
