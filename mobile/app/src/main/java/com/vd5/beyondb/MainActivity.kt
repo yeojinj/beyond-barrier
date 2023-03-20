@@ -4,17 +4,17 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothAdapter.*
-import android.bluetooth.BluetoothGatt
-import android.bluetooth.BluetoothGattCallback
+import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
-import android.bluetooth.BluetoothProfile
 import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.*
 import android.content.pm.PackageManager
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
@@ -49,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         // TODO : 장치와 연결되어 있지 않고 실행할 때마다 호출 필요
         scanLeDevice(true)
 
-
-
         ///////////////////////////////////
 
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -74,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     private val REQUEST_ENABLE_BT=1
     private val REQUEST_ALL_PERMISSION= 2
     private val SCAN_PERIOD: Long = 10000 // BLE 스캔 시간
-    private val handler = Handler()
+    private val handler = Handler(Looper.getMainLooper())
 
     private val TAG = "MainActivityDebug" // 디버그용 tag
 
@@ -110,7 +108,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    var bluetoothGatt: BluetoothGatt? = null
     var deviceAddress: String? = null
 
     private val leScanCallback = object: ScanCallback() {
@@ -124,31 +121,21 @@ class MainActivity : AppCompatActivity() {
                 ActivityCompat.requestPermissions(this@MainActivity, PERMISSIONS_BT, REQUEST_ALL_PERMISSION)
                 return
             }
-            Log.d(TAG, "onScanResult: deviceName = " + result?.device?.name)
-            if(result?.device?.name != null && result.device.name.equals("vd5")) {
-//                bluetoothGatt = result?.device?.connectGatt(this@MainActivity, false, gattCallback)
+            if(result?.device?.name != null)
+                Log.d(TAG, "onScanResult: deviceName = " + result.device?.name)
+            if(result?.device?.name != null && result.device.name.equals("Tizen")) {
                 deviceAddress = result.device.address
-                Log.d(TAG, "onScanResult: 주소 = $deviceAddress")
                 val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
                 bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
                 // TODO : 장치를 찾았으므로 스캔 종료 필요 !!!
+                scanning = false
+                bluetoothAdapter?.bluetoothLeScanner?.stopScan(stopScancallback as ScanCallback?)
             }
         }
     }
+    private val stopScancallback = object: ScanCallback() {}
 
     private var connectionState = STATE_DISCONNECTED
-
-    val gattCallback = object: BluetoothGattCallback() {
-        override fun onConnectionStateChange(gatt: BluetoothGatt?, status: Int, newState: Int) {
-            super.onConnectionStateChange(gatt, status, newState)
-            when (newState) {
-                BluetoothProfile.STATE_CONNECTED -> connectionState = STATE_CONNECTED
-                BluetoothProfile.STATE_DISCONNECTED -> connectionState = STATE_DISCONNECTED
-            }
-            Log.d(TAG, "onConnectionStateChange: 현재 연결 상태 = $newState")
-        }
-
-    }
 
     private var bluetoothService: BluetoothLeService? = null
 
@@ -171,6 +158,7 @@ class MainActivity : AppCompatActivity() {
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
+            Log.d(TAG, "onReceive: " + intent.action)
             when (intent.action) {
                 BluetoothLeService.ACTION_GATT_CONNECTED -> {
                     connectionState = STATE_CONNECTED
@@ -179,6 +167,40 @@ class MainActivity : AppCompatActivity() {
                 BluetoothLeService.ACTION_GATT_DISCONNECTED -> {
                     connectionState = STATE_DISCONNECTED
                     Log.d(TAG, "onReceive: 연결 안됨 방송")
+                    Log.d(TAG, "onReceive: 연결 재시도")
+                    scanLeDevice(true)
+                }
+                BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED -> {
+                    Log.d(TAG, "onReceive: 서비스 발견 방송")
+                    Log.d(TAG, "onReceive: " + bluetoothService?.getSupportedGattServices())
+                    accessGattServices(bluetoothService?.getSupportedGattServices())
+                }
+                BluetoothLeService.ACTION_DATA_AVAILABLE -> {
+                    Log.d(TAG, "onReceive: READ or NOTIFY")
+                    Log.d(TAG, "onReceive: ${intent.getStringExtra(NfcAdapter.EXTRA_DATA)}")
+                }
+            }
+        }
+    }
+
+    private val UUID_READ = "00001234-0000-1000-8000-00805f9b34fb"
+//    private val UUID_READ = "24c33316-87b2-4159-9dbd-87d730e27745"
+    private fun accessGattServices(gattServices: List<BluetoothGattService?>?) {
+        Log.d(TAG, "accessGattServices: 서비스 접근 메소드")
+        if (gattServices == null) return
+        var uuid: String?
+        gattServices.forEach { gattService ->
+            uuid = gattService?.uuid.toString()
+            Log.d(TAG, "accessGattServices: $uuid")
+            val gattCharacteristics = gattService?.characteristics
+            gattCharacteristics?.forEach { gattCharacteristic ->
+                uuid = gattCharacteristic.uuid.toString()
+                Log.d(TAG, "accessGattServices: characteristic $uuid")
+                if (uuid.equals(UUID_READ)) {
+                    Log.d(TAG, "accessGattServices: READ 요청")
+                    bluetoothService?.readCharacteristic(gattCharacteristic)
+                    Log.d(TAG, "accessGattServices: NOTIFY 시작")
+                    bluetoothService?.setCharacteristicNotification(gattCharacteristic, true)
                 }
             }
         }
@@ -198,16 +220,18 @@ class MainActivity : AppCompatActivity() {
         unregisterReceiver(gattUpdateReceiver)
     }
 
-    private fun makeGattUpdateIntentFilter(): IntentFilter? {
+    private fun makeGattUpdateIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(BluetoothLeService.ACTION_GATT_CONNECTED)
             addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED)
+            addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED)
+            addAction(BluetoothLeService.ACTION_DATA_AVAILABLE)
         }
     }
 
     @SuppressLint("MissingPermission")
     fun bluetoothOn(){
-        val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        val enableBtIntent = Intent(ACTION_REQUEST_ENABLE)
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
     }
 }
