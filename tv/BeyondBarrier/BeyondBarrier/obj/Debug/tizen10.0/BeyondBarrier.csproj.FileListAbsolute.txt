@@ -1,0 +1,11 @@
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\BeyondBarrier.csproj.AssemblyReference.cache
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\BeyondBarrier.GeneratedMSBuildEditorConfig.editorconfig
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\BeyondBarrier.AssemblyInfoInputs.cache
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\BeyondBarrier.AssemblyInfo.cs
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\BeyondBarrier.csproj.CoreCompileInputs.cache
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\BeyondBarrier.deps.json
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\BeyondBarrier.dll
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\BeyondBarrier.pdb
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\XamlC.stamp
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\BeyondBarrier.dll
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\obj\Debug\tizen10.0\BeyondBarrier.pdb

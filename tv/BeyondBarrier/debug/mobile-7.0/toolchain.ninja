@@ -1,0 +1,69 @@
+rule stamp
+  command = C:/tizen-studio/tools/tizen-core/uutils touch ${out}
+  description = STAMP ${out}
+rule copy
+  command = cmd /c " (C:/tizen-studio/tools/tizen-core/uutils rm -rf ${out} && C:/tizen-studio/tools/tizen-core/uutils cp ${in} ${out}) "
+  description = COPY ${out}
+
+rule __BeyondBarrier_BeyondBarrier_csproj_build__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+  command = C:/tizen-studio/tools/tizen-core/tz dotnet-build build --target-path C$:/repos/VD/S08P21S005/tv/BeyondBarrier/BeyondBarrier/BeyondBarrier.csproj --build-tool "C$:/Program$ Files/dotnet/dotnet.exe" --configuration debug -t dotnet-cli --status-file C$:/repos/VD/S08P21S005/tv/BeyondBarrier/debug/mobile-7.0/dotnet_build/status/BeyondBarrier_csproj_build -D -S
+  description = build csproj "C:/repos/VD/S08P21S005/tv/BeyondBarrier/BeyondBarrier/BeyondBarrier.csproj" using "C:/Program Files/dotnet/dotnet.exe" : can be modified in tizen_workspace.yaml
+  restat = 1
+
+build dotnet_build/status/BeyondBarrier_csproj_build: __BeyondBarrier_BeyondBarrier_csproj_build__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule | dotnet_build/status/BeyondBarrier_status_check ../../BeyondBarrier/BeyondBarrier.csproj ../../BeyondBarrier/BeyondBarrier_App.cs ../../BeyondBarrier/tizen-manifest.xml ../../BeyondBarrier/shared/res/BeyondBarrier.png obj/BeyondBarrier/BeyondBarrier_status_check.stamp
+
+build obj/BeyondBarrier/BeyondBarrier_csproj_build.stamp: stamp dotnet_build/status/BeyondBarrier_csproj_build
+rule __BeyondBarrier_BeyondBarrier_status_check__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+  command = C:/tizen-studio/tools/tizen-core/tz dotnet-build check --csproj-path C$:/repos/VD/S08P21S005/tv/BeyondBarrier/BeyondBarrier/BeyondBarrier.csproj --configuration debug --status-file C$:/repos/VD/S08P21S005/tv/BeyondBarrier/debug/mobile-7.0/dotnet_build/status/BeyondBarrier_status_check --name BeyondBarrier
+  description = Check outputfiles status of BeyondBarrier
+  restat = 1
+
+build dotnet_build/status/BeyondBarrier_status_check dotnet_build/status/BeyondBarrier_status_check_trigger: __BeyondBarrier_BeyondBarrier_status_check__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+
+build obj/BeyondBarrier/BeyondBarrier_status_check.stamp: stamp dotnet_build/status/BeyondBarrier_status_check dotnet_build/status/BeyondBarrier_status_check_trigger
+build obj/BeyondBarrier/all.stamp: stamp obj/BeyondBarrier/BeyondBarrier_csproj_build.stamp
+build obj/BeyondBarrier/hash.stamp: stamp
+build obj/BeyondBarrier/out.stamp: stamp obj/BeyondBarrier/BeyondBarrier_csproj_build.stamp
+build obj/build/build.stamp: stamp obj/BeyondBarrier/all.stamp
+build obj/build/hash.stamp: stamp obj/BeyondBarrier/hash.stamp
+rule __build_install__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+  command = C:/tizen-studio/tools/tizen-core/tz sdb "install$ org.tizen.example.BeyondBarrier-1.0.0.tpk" -x -w dotnet -s install -p org.tizen.example.BeyondBarrier-1.0.0.tpk -i org.tizen.example.BeyondBarrier
+  description = INSTALL org.tizen.example.BeyondBarrier-1.0.0.tpk
+  restat = 1
+
+build install.org.tizen.example.BeyondBarrier-1.0.0.tpk: __build_install__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule | obj/build/pack.stamp
+
+build obj/build/install.stamp: stamp install.org.tizen.example.BeyondBarrier-1.0.0.tpk
+rule __build_pack__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+  command = C:/tizen-studio/tools/tizen-core/tz sign-pack hybrid -d C$:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\org.tizen.example.BeyondBarrier-1.0.0.tpk -b C$:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\org.tizen.example.BeyondBarrier-1.0.0.tpk -f org.tizen.example.BeyondBarrier-1.0.0.tpk -c -p C$:/tizen-studio-data/profile/profiles.xml -s .
+  description = Repack the hybrid pkg file
+  restat = 1
+
+build org.tizen.example.BeyondBarrier-1.0.0.tpk: __build_pack__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule | obj/build/pack_dotnet.stamp
+
+build obj/build/pack.stamp: stamp org.tizen.example.BeyondBarrier-1.0.0.tpk
+build obj/build/pack_dotnet.stamp: stamp obj/build/build.stamp
+rule __build_run.org.tizen.example.BeyondBarrier__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+  command = C:/tizen-studio/tools/tizen-core/tz sdb "launch$ -p$ org.tizen.example.BeyondBarrier$ -e$ org.tizen.example.BeyondBarrier$ -m$ run" -x -w dotnet -s run -i org.tizen.example.BeyondBarrier -e org.tizen.example.BeyondBarrier -P C$:\repos\VD\S08P21S005\tv\BeyondBarrier -a org.tizen.example.BeyondBarrier
+  description = RUN org.tizen.example.BeyondBarrier in org.tizen.example.BeyondBarrier
+  restat = 1
+
+build launch.org.tizen.example.BeyondBarrier.org.tizen.example.BeyondBarrier: __build_run.org.tizen.example.BeyondBarrier__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule | obj/build/install.stamp
+
+build obj/build/run.org.tizen.example.BeyondBarrier.stamp: stamp launch.org.tizen.example.BeyondBarrier.org.tizen.example.BeyondBarrier
+rule __build_uninstall__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+  command = C:/tizen-studio/tools/tizen-core/tz sdb "uninstall$ org.tizen.example.BeyondBarrier" -x -w dotnet -s uninstall -i org.tizen.example.BeyondBarrier
+  description = UNINSTALL org.tizen.example.BeyondBarrier
+  restat = 1
+
+build uninstall.org.tizen.example.BeyondBarrier: __build_uninstall__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+
+build obj/build/uninstall.stamp: stamp uninstall.org.tizen.example.BeyondBarrier
+rule __build_uninstall_process__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+  command = cmd.exe /c echo "The$ first$ project$ corresponding$ to$ the$ csproj/sln$ specified$ in$ working_folder$ in$ tizen_workspace.yaml$ will$ be$ uninstalled$ $:$ org.tizen.example.BeyondBarrier"
+  description = NOTIFY :uninstall org.tizen.example.BeyondBarrier
+  restat = 1
+
+build uninstall_processorg.tizen.example.BeyondBarrier: __build_uninstall_process__C__tizen-studio_tools_tizen-core_dotnet_toolchains_dotnet_builder__rule
+
+build obj/build/uninstall_process.stamp: stamp uninstall_processorg.tizen.example.BeyondBarrier

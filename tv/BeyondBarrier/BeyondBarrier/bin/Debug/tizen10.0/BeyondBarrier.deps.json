@@ -1,0 +1,56 @@
+{
+  "runtimeTarget": {
+    "name": "Tizen,Version=v10.0/",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    "Tizen,Version=v10.0": {},
+    "Tizen,Version=v10.0/": {
+      "BeyondBarrier/1.0.0": {
+        "dependencies": {
+          "Tizen.NET": "10.0.0.17508"
+        },
+        "runtime": {
+          "BeyondBarrier.dll": {}
+        }
+      },
+      "Microsoft.NETCore.Platforms/3.1.0": {},
+      "Tizen.NET/10.0.0.17508": {
+        "dependencies": {
+          "Microsoft.NETCore.Platforms": "3.1.0",
+          "Tizen.NET.API10": "10.0.0.17508"
+        }
+      },
+      "Tizen.NET.API10/10.0.0.17508": {}
+    }
+  },
+  "libraries": {
+    "BeyondBarrier/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "Microsoft.NETCore.Platforms/3.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-z7aeg8oHln2CuNulfhiLYxCVMPEwBl3rzicjvIX+4sUuCwvXw5oXQEtbiU2c0z4qYL5L3Kmx0mMA/+t/SbY67w==",
+      "path": "microsoft.netcore.platforms/3.1.0",
+      "hashPath": "microsoft.netcore.platforms.3.1.0.nupkg.sha512"
+    },
+    "Tizen.NET/10.0.0.17508": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-sEFJb1Pre8Li06CkvE4ub/ifd4WS3eZfJxHojiUK57mTewmx/PWv3Tm4x6v6hj+N97+FmeoBcrIhYNh8bB8goQ==",
+      "path": "tizen.net/10.0.0.17508",
+      "hashPath": "tizen.net.10.0.0.17508.nupkg.sha512"
+    },
+    "Tizen.NET.API10/10.0.0.17508": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-SpsFTjtV7WituZfYJO60SKbOPjWBVxO1QnQh7AmcwEqwF+6NdIs32hf836id3gLFZgp27deD8u2gkCNbmx2drA==",
+      "path": "tizen.net.api10/10.0.0.17508",
+      "hashPath": "tizen.net.api10.10.0.0.17508.nupkg.sha512"
+    }
+  }
+}

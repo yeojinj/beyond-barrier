@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<manifest package="org.tizen.example.BeyondBarrier" version="1.0.0" api-version="7.0" xmlns="http://tizen.org/ns/packages">
+    <profile name="common" />
+    <service-application appid="org.tizen.example.BeyondBarrier" exec="BeyondBarrier.dll" multiple="false" nodisplay="true" taskmanage="false" api-version="10" type="dotnet" auto-restart="true" on-boot="true">
+        <label>BeyondBarrier</label>
+        <icon>BeyondBarrier.png</icon>
+        <splash-screens />
+    </service-application>
+    <shortcut-list />
+    <privileges>
+        <privilege>http://tizen.org/privilege/bluetooth</privilege>
+    </privileges>
+    <dependencies />
+    <provides-appdefined-privileges />
+</manifest>

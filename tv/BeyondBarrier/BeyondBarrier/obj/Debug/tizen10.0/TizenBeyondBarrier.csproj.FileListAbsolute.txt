@@ -1,0 +1,6 @@
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\bin\BeyondBarrier.dll
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\bin\BeyondBarrier.pdb
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\BeyondBarrier.deps.json
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\shared\res\BeyondBarrier.png
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\tizen-manifest.xml
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\org.tizen.example.BeyondBarrier-1.0.0.tpk
