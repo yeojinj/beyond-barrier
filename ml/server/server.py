@@ -1,8 +1,12 @@
 from flask import *
 import os
 
+
+######################## SELECT #######################
 # Select GPU Device
-# os.environ["CUDA_VISIBLE_DEVICES"] = '5'
+os.environ["CUDA_VISIBLE_DEVICES"] = '5'
+#######################################################
+
 
 from huggingface_hub import hf_hub_download
 coco_weight = hf_hub_download(repo_id="akhaliq/CLIP-prefix-captioning-COCO-weights", filename="coco_weights.pt")
@@ -21,14 +25,13 @@ import PIL.Image
 
 ##### logo_detection start
 
-
 ######################## SELECT #######################
 
 ##### (1) GPU Server 모델 설정
-# logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='flask_server/best.pt', _verbose=False)
+logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='server/best.pt', _verbose=False)
 
 ##### (2) Local Server 모델 설정
-logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best.pt', _verbose=False)
+# logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best.pt', _verbose=False)
 
 #######################################################
 
@@ -66,8 +69,7 @@ TN = Optional[T]
 TNS = Union[Tuple[TN, ...], List[TN]]
 TSN = Optional[TS]
 TA = Union[T, ARRAY]
-
-
+GPT2 = GPT2LMHeadModel.from_pretrained('gpt2')
 D = torch.device
 CPU = torch.device('cpu')
 
@@ -77,7 +79,6 @@ def get_device(device_id: int) -> D:
         return CPU
     device_id = min(torch.cuda.device_count() - 1, device_id)
     return torch.device(f'cuda:{device_id}')
-
 
 CUDA = get_device
 
@@ -96,13 +97,28 @@ class MLP(nn.Module):
                 layers.append(act())
         self.model = nn.Sequential(*layers)
 
+############################
+# 시간 측정을 위한 임시 코드
+# import time
 
+# def logging_time(original_fn):
+#     def wrapper_fn(*args, **kwargs):
+#         start_time = time.time()
+#         result = original_fn(*args, **kwargs)
+#         end_time = time.time()
+#         print("WorkingTime[{}]: {} sec".format(original_fn.__name__, end_time - start_time))
+#         return result
+#     return wrapper_fn
+
+############################
 class ClipCaptionModel(nn.Module):
 
+    # @logging_time
     #@functools.lru_cache #FIXME
     def get_dummy_token(self, batch_size: int, device: D) -> T:
         return torch.zeros(batch_size, self.prefix_length, dtype=torch.int64, device=device)
 
+    # @logging_time
     def forward(self, tokens: T, prefix: T, mask: Optional[T] = None, labels: Optional[T] = None):
         embedding_text = self.gpt.transformer.wte(tokens)
         prefix_projections = self.clip_project(prefix).view(-1, self.prefix_length, self.gpt_embedding_size)
@@ -115,16 +131,43 @@ class ClipCaptionModel(nn.Module):
         out = self.gpt(inputs_embeds=embedding_cat, labels=labels, attention_mask=mask)
         return out
 
+    # @logging_time
     def __init__(self, prefix_length: int, prefix_size: int = 512):
+        
+        # (1) 불러오기
+        # start = time.time()
         super(ClipCaptionModel, self).__init__()
+        # end = time.time()
+        # print("(1): " + f"{end - start:.5f} sec")
+        
+        # (2) GP2LMHeadModel
+        # start = time.time()
         self.prefix_length = prefix_length
-        self.gpt = GPT2LMHeadModel.from_pretrained('gpt2')
+        # end = time.time()
+        # print("(2-1): " + f"{end - start:.5f} sec")
+        
+        # start = time.time()
+        self.gpt = GPT2
+        # end = time.time()
+        # print("(2-2): " + f"{end - start:.5f} sec")
+        
+        # start = time.time()
         self.gpt_embedding_size = self.gpt.transformer.wte.weight.shape[1]
+        # end = time.time()
+        # print("(2-3): " + f"{end - start:.5f} sec")
+        
+        
+        # (3) 
+        # start = time.time()
         if prefix_length > 10:  # not enough memory
+            # print("(3-1)")
             self.clip_project = nn.Linear(prefix_size, self.gpt_embedding_size * prefix_length)
         else:
+            # print("(3-2)")
             self.clip_project = MLP((prefix_size, (self.gpt_embedding_size * prefix_length) // 2, self.gpt_embedding_size * prefix_length))
 
+        # end = time.time()
+        # print("(2): " + f"{end - start:.5f} sec")
 
 class ClipCaptionPrefix(ClipCaptionModel):
 
@@ -271,12 +314,12 @@ tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
 def inference(img):
     print("start inference")
     prefix_length = 10
-    
     model = ClipCaptionModel(prefix_length)
     model_path = coco_weight
     model.load_state_dict(torch.load(model_path, map_location=CPU)) 
     model = model.eval() 
     device = CUDA(0) if is_gpu else "cpu"
+    
     print(device)
     model = model.to(device)
 
@@ -314,12 +357,12 @@ def image_caption():
         ######################## SELECT #######################
         
         ##### (1) GPU Server 폴더 구조
-        # f.save('flask_server/static/imagecaption/' + f.filename)
-        # result = inference('flask_server/static/imagecaption/' + f.filename)
+        f.save('server/static/imagecaption/' + f.filename)
+        result = inference('server/static/imagecaption/' + f.filename)
         
         ##### (2) Local Server 폴더 구조
-        f.save('./static/imagecaption/' + f.filename)
-        result = inference('./static/imagecaption/' + f.filename)
+        # f.save('./static/imagecaption/' + f.filename)
+        # result = inference('./static/imagecaption/' + f.filename)
         
         #######################################################
         return result
@@ -333,12 +376,12 @@ def logo_detect():
         ######################## SELECT #######################
         
         ##### (1) GPU Server 폴더 구조
-        # f.save('flask_server/static/logodetect' + f.filename)
-        # result = logodetect('flask_server/static/logodetect' + f.filename)
+        f.save('server/static/logodetect' + f.filename)
+        result = logodetect('server/static/logodetect' + f.filename)
         
         ##### (2) Local Server 폴더 구조
-        f.save('./static/logodetect/' + f.filename)
-        result = logodetect('./static/logodetect/' + f.filename)
+        # f.save('./static/logodetect/' + f.filename)
+        # result = logodetect('./static/logodetect/' + f.filename)
         
         #######################################################
         return result
@@ -379,9 +422,9 @@ def s3_logo_detection():
 ######################## SELECT #######################
 
 ##### (1) GPU Server
-# app.run(host='70.12.130.121', port='5000', debug=True)
+app.run(host='70.12.130.121', port='5000', debug=True)
 
 ##### (2) Local Server
-app.run(port='5000', debug=True)
+# app.run(port='5000', debug=True)
 
 #######################################################
