@@ -7,6 +7,9 @@ using System.Diagnostics;
 using System;
 using System.Text;
 using System.Reflection.PortableExecutable;
+using System.IO;
+using System.Net.Http;
+using System.Text.Json;
 
 namespace BeyondBarrier
 {
@@ -50,33 +53,43 @@ namespace BeyondBarrier
 
         class BeyondBarrierBleServer : IDisposable
         {
-            const string ServiceUuid = "00005555-0000-1000-8000-00805f9b34fb";
-            const string CharacteristicUuid = "00001234-0000-1000-8000-00805f9b34fb";
-            const string CharacteristicValue = "Hello BLE!";
+            const string CaptioningServiceUuid = "00005555-0000-1000-8000-00805f9b34fb";
+            const string CaptioningCharacteristicUuid = "00001234-0000-1000-8000-00805f9b34fb";
+            const string CaptioningCharacteristicValue = "captionCharacter";
+            const string CaptioningDescriptorUuid = "00005678-0000-1000-8000-00805f9b34fb";
+            const string CaptioningDescriptorValue = "abcde";
             public BluetoothGattServer GattServer;
-            public BluetoothGattService GattService;
-            public BluetoothGattCharacteristic GattCharacteristic;
+            public BluetoothGattService CaptioningService;
+            public BluetoothGattCharacteristic CaptioningCharacteristic;
+            public BluetoothGattDescriptor CaptioningDescriptor;
             public BluetoothLeAdvertiser BleAdvertiser;
             public BluetoothLeAdvertiseData BleAdvertiseData;
+            public string ClientAddress = null;
 
             public BeyondBarrierBleServer()
             {
                 // Init GattServer, Creating Service and Characteristic
                 GattServer = BluetoothGattServer.CreateServer();
-                GattService = new BluetoothGattService(ServiceUuid, BluetoothGattServiceType.Primary);
-                GattCharacteristic = new BluetoothGattCharacteristic(CharacteristicUuid,
+                CaptioningService = new BluetoothGattService(CaptioningServiceUuid, BluetoothGattServiceType.Primary);
+                CaptioningCharacteristic = new BluetoothGattCharacteristic(CaptioningCharacteristicUuid,
                     BluetoothGattPermission.Read | BluetoothGattPermission.Write,
                     BluetoothGattProperty.Read | BluetoothGattProperty.Write | BluetoothGattProperty.Notify,
-                    Encoding.Default.GetBytes(CharacteristicValue));
+                    Encoding.Default.GetBytes(CaptioningCharacteristicValue));
+                CaptioningDescriptor = new BluetoothGattDescriptor(
+                    CaptioningDescriptorUuid,
+                    BluetoothGattPermission.Read | BluetoothGattPermission.Write,
+                    Encoding.Default.GetBytes(CaptioningDescriptorValue));
 
-                GattService.AddCharacteristic(GattCharacteristic);
-                GattServer.RegisterGattService(GattService);
+                CaptioningCharacteristic.AddDescriptor(CaptioningDescriptor);
+                CaptioningService.AddCharacteristic(CaptioningCharacteristic);
+                GattServer.RegisterGattService(CaptioningService);
 
                 // adding Callback functions
-                GattCharacteristic.ReadRequested += ReadRequestedCB;
-                GattCharacteristic.WriteRequested += WriteRequestedCB;
-                GattCharacteristic.ValueChanged += CharacteristicValueChangedCB;
-                GattServer.NotificationSent += NotificationSentCB;
+                CaptioningDescriptor.ReadRequested += DescriptorReadRequestedCB;
+                CaptioningDescriptor.WriteRequested += DescriptorWriteRequestedCB;
+                CaptioningCharacteristic.ReadRequested += ReadRequestedCB;
+                CaptioningCharacteristic.WriteRequested += WriteRequestedCB;
+                CaptioningCharacteristic.NotificationStateChanged += NotificationStateChangedCB;
 
                 GattServer.Start();
                 Log.Info("BB_check", "Bluetooth GATT Server Started");
@@ -89,51 +102,95 @@ namespace BeyondBarrier
                 BleAdvertiseData.IncludeDeviceName = true;
                 BleAdvertiseData.AdvertisingMode = BluetoothLeAdvertisingMode.BluetoothLeAdvertisingBalancedMode;
 
-                BleAdvertiseData.AddAdvertisingServiceUuid(BluetoothLePacketType.BluetoothLeScanResponsePacket, ServiceUuid);
+                BleAdvertiseData.AddAdvertisingServiceUuid(BluetoothLePacketType.BluetoothLeScanResponsePacket, CaptioningServiceUuid);
 
                 BleAdvertiser.StartAdvertising(BleAdvertiseData);
                 Log.Info("BB_check", "Bluetooth Advertise Started");
             }
 
-            public void CharacteristicValueChangedCB (object sender, ValueChangedEventArgs e)
-            {
-                Log.Info("BB_check", "Character value changed");
-                Log.Info("BB_check", e.Value.ToString());
-            }
-
-            public void ReadRequestedCB (object sender, ReadRequestedEventArgs e)
+            public async void ReadRequestedCB (object sender, ReadRequestedEventArgs e)
             {
                 Log.Info("BB_check", "character read requested");
-                Log.Info("BB_check", e.ClientAddress.ToString());
+                Log.Info("BB_check", e.ClientAddress);
                 e.Server.SendResponse(
                     e.RequestId,
                     BluetoothGattRequestType.Read,
                     0,
-                    e.Server.GetService(ServiceUuid).GetCharacteristic(CharacteristicUuid).Value,
+                    e.Server.GetService(CaptioningServiceUuid).GetCharacteristic(CaptioningCharacteristicUuid).Value,
                     e.Offset);
+
+                await Task.Delay(1000);
+                CaptioningCharacteristic.SetValue("Test_valueChanged");
+                e.Server.SendNotification(CaptioningCharacteristic, e.ClientAddress);
+                await Task.Delay(1000);
+                CaptioningCharacteristic.SetValue("captionCharacter");
+                //ImageCaptionRequest();
             }
 
             public void WriteRequestedCB (object sender, WriteRequestedEventArgs e)
             {
                 Log.Info("BB_check", "characteristic write requested");
-                GattCharacteristic.Value = e.Value;
+                CaptioningCharacteristic.SetValue(e.Value.ToString());
+                Log.Debug("BB_check", "Characteristic Value : " + CaptioningCharacteristic.Value);
                 e.Server.SendResponse(
                     e.RequestId,
                     BluetoothGattRequestType.Write,
                     0,
-                    e.Server.GetService(ServiceUuid).GetCharacteristic(CharacteristicUuid).Value,
+                    e.Server.GetService(CaptioningServiceUuid).GetCharacteristic(CaptioningCharacteristicUuid).Value,
+                    e.Offset);
+            }
+
+            public void DescriptorReadRequestedCB (object sender, ReadRequestedEventArgs e)
+            {
+                Log.Info("BB_check", "Descriptor read requested");
+                Log.Debug("BB_check", "client address : " + e.ClientAddress);
+                
+                e.Server.SendResponse(
+                    e.RequestId,
+                    BluetoothGattRequestType.Read,
+                    0,
+                    e.Server.GetService(CaptioningServiceUuid)
+                    .GetCharacteristic(CaptioningCharacteristicUuid)
+                    .GetDescriptor(CaptioningDescriptorUuid)
+                    .Value,
+                    e.Offset);
+
+            }
+
+            public void DescriptorWriteRequestedCB(object sender, WriteRequestedEventArgs e)
+            {
+                Log.Info("BB_check", "Descriptor write requested");
+                CaptioningDescriptor.SetValue(e.Value.ToString());
+                Log.Debug("BB_check", "Descriptor Value : " + CaptioningDescriptor.Value);
+                e.Server.SendResponse(
+                    e.RequestId,
+                    BluetoothGattRequestType.Write,
+                    0,
+                    e.Server.GetService(CaptioningServiceUuid)
+                    .GetCharacteristic(CaptioningCharacteristicUuid)
+                    .GetDescriptor(CaptioningDescriptorUuid)
+                    .Value,
                     e.Offset);
             }
 
             public void NotificationSentCB(object sender, NotificationSentEventArg e)
             {
-                Log.Info("BB_check", e.ClientAddress);
-                Log.Info("BB_check", e.Server.ToString());
+                GattServer.NotificationSent -= NotificationSentCB;
+                Log.Info("BB_check", "Notification sent from Gatt server");
+                Log.Debug("BB_check", e.ClientAddress);
             }
 
-            public void NotificationStateChangedCB(object sender, NotificationStateChangedEventArg e)
+            public async void NotificationStateChangedCB(object sender, NotificationStateChangedEventArg e)
             {
                 Log.Info("BB_check", "notification state changed");
+                Log.Debug("BB_check", e.Value.ToString());
+                GattServer.NotificationSent += NotificationSentCB;
+
+                CaptioningCharacteristic.SetValue("Caption Response");
+                await e.Server.SendIndicationAsync(CaptioningCharacteristic, null);
+                Log.Debug("BB_check", "noti sent");
+
+                CaptioningCharacteristic.SetValue("012345678901234567890");
             }
 
             public void AdvertisingStateChangedCB(object sender, AdvertisingStateChangedEventArgs e)
@@ -144,8 +201,28 @@ namespace BeyondBarrier
             {
                 Log.Info("BB_check", "Gatt Server Terminating");
                 BleAdvertiser.StopAdvertising(BleAdvertiseData);
-                GattServer.UnregisterGattService(GattService);
+                GattServer.UnregisterGattService(CaptioningService);
                 GattServer.Dispose();
+            }
+
+            public async void ImageCaptionRequest()
+            {
+                using (var client = new HttpClient())
+                {
+                    var content = new
+                    {
+                        deviceId = "Tizen",
+                        imgPath = "http://www.econovill.com/news/photo/201807/342619_212106_2248.jpg",
+                        captureTime = "2023-03-09T13:46:11"
+                    };
+                    var json = JsonSerializer.Serialize(content);
+                    var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync("", httpContent);
+                    var responseString = await response.Content.ReadAsStringAsync();
+                    // Handle response
+                    Log.Debug("BB_check", "Caption response : " + responseString);
+
+                }
             }
         }
     }
