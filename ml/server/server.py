@@ -56,7 +56,7 @@ def logodetect(img):
     for i in range(0, df.shape[0]):
         row = df.iloc[i]
         if row['confidence'] >= 0.9:
-            return int(row['name'])
+            return row['name']
         
     # if logo detection fails
     return -1
