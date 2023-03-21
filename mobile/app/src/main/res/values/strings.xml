@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">beyondb</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">메인화면</string>
+    <string name="title_dashboard">고양이</string>
+    <string name="title_notifications">캡셔닝</string>
+    <string name="title_settings">설정</string>
+
 </resources>
