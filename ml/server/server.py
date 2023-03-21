@@ -43,15 +43,23 @@ def logodetect(img):
     
     ##### (1) S3 link를 이용하여 load
     image = io.imread(img)
-    im1 = PIL.Image.fromarray(image)    # PIL image
+    im = PIL.Image.fromarray(image)  # PIL image
     
     ##### (2) Image File을 load
-    # im1 = PIL.Image.open(img)  # PIL image
+    # im = PIL.Image.open(img)  # PIL image
     
     #######################################################
     
-    results = logo_model(im1) # batch of images
-    return results.pandas().xyxy[0].to_json()
+    results = logo_model(im)
+    df = results.pandas().xyxy[0]  # result in pandas.DataFrame
+
+    for i in range(0, df.shape[0]):
+        row = df.iloc[i]
+        if row['confidence'] >= 0.9:
+            return int(row['name'])
+        
+    # if logo detection fails
+    return -1
 
 ##### logo_detection end
 
