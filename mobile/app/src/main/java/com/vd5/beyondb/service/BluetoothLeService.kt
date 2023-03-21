@@ -151,8 +151,8 @@ class BluetoothLeService: Service() {
         }
     }
 
-    private val UUID_NOTIFY = "00005678-0000-1000-8000-00805f9b34fb"
-//    private val UUID_NOTIFY = "00002902-0000-1000-8000-00805f9b34fb"
+//    private val UUID_NOTIFY = "00005678-0000-1000-8000-00805f9b34fb"
+    private val UUID_NOTIFY = "00002902-0000-1000-8000-00805f9b34fb"
 
     @SuppressLint("MissingPermission")
     fun setCharacteristicNotification(
@@ -161,13 +161,13 @@ class BluetoothLeService: Service() {
     ) {
         bluetoothGatt?.let { gatt ->
             gatt.setCharacteristicNotification(characteristic, enabled)
-
-            for (descriptor in characteristic.descriptors) {
-                Log.e(TAG, "BluetoothGattDescriptor: " + descriptor.uuid.toString())
-            }
-            val descriptor = characteristic.getDescriptor(UUID.fromString(UUID_NOTIFY))
-            descriptor.value = BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE
-            gatt.writeDescriptor(descriptor)
+//
+//            for (descriptor in characteristic.descriptors) {
+//                Log.e(TAG, "BluetoothGattDescriptor: " + descriptor.uuid.toString())
+//            }
+//            val descriptor = characteristic.getDescriptor(UUID.fromString(UUID_NOTIFY))
+//            descriptor.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
+//            gatt.writeDescriptor(descriptor)
         } ?: run {
             Log.w(TAG, "BluetoothGatt not initialized")
         }
@@ -181,6 +181,8 @@ class BluetoothLeService: Service() {
             "com.example.bluetooth.le.ACTION_GATT_SERVICES_DISCOVERED"
         const val ACTION_DATA_AVAILABLE =
             "com.example.bluetooth.le.ACTION_DATA_AVAILABLE"
+        const val ACTION_GATT_CAPTIONING =
+            "com.vd5.bluetooth.le.ACTION_GATT_CAPTIONING"
 
         private const val STATE_DISCONNECTED = 0
         private const val STATE_CONNECTED = 2
