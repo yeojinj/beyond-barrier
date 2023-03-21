@@ -59,7 +59,7 @@ def logodetect(img):
             return row['name']
         
     # if logo detection fails
-    return -1
+    return "-1"
 
 ##### logo_detection end
 
