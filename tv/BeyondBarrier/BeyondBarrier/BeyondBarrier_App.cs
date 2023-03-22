@@ -133,7 +133,7 @@ namespace BeyondBarrier
                 // await HttpRequestTest();
 
                 //Manual Test
-                // await NotiTest();
+                // await NotiTest(e);
 
                 // Change Characteristic's Value
                 // Send Notification to connected Device
@@ -261,7 +261,7 @@ namespace BeyondBarrier
                 else Log.Debug("BB_check", "Response Value : " + CaptionResultString);
             }
 
-            public async Task NotiTest()
+            public async Task NotiTest(ReadRequestedEventArgs e)
             {
                 CaptioningCharacteristic.SetValue("Test_valueChanged");
                 await Task.Delay(1000);
