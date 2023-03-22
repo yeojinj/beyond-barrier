@@ -10,6 +10,7 @@ using System.Reflection.PortableExecutable;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
+using System.Security.Cryptography.X509Certificates;
 
 namespace BeyondBarrier
 {
@@ -55,9 +56,10 @@ namespace BeyondBarrier
         {
             const string CaptioningServiceUuid = "00005555-0000-1000-8000-00805f9b34fb";
             const string CaptioningCharacteristicUuid = "00001234-0000-1000-8000-00805f9b34fb";
-            const string CaptioningCharacteristicValue = "captionCharacter";
+            const string CaptioningCharacteristicValue = "initValue";
             const string CaptioningDescriptorUuid = "00005678-0000-1000-8000-00805f9b34fb";
             const string CaptioningDescriptorValue = "abcde";
+            public string CaptionResultString = "empty result";
             public BluetoothGattServer GattServer;
             public BluetoothGattService CaptioningService;
             public BluetoothGattCharacteristic CaptioningCharacteristic;
@@ -73,7 +75,8 @@ namespace BeyondBarrier
                 CaptioningService = new BluetoothGattService(CaptioningServiceUuid, BluetoothGattServiceType.Primary);
                 CaptioningCharacteristic = new BluetoothGattCharacteristic(CaptioningCharacteristicUuid,
                     BluetoothGattPermission.Read | BluetoothGattPermission.Write,
-                    BluetoothGattProperty.Read | BluetoothGattProperty.Write | BluetoothGattProperty.Notify,
+                    BluetoothGattProperty.Read | BluetoothGattProperty.Write
+                    | BluetoothGattProperty.Notify | BluetoothGattProperty.ExtendedProperties,
                     Encoding.Default.GetBytes(CaptioningCharacteristicValue));
                 CaptioningDescriptor = new BluetoothGattDescriptor(
                     CaptioningDescriptorUuid,
@@ -89,6 +92,7 @@ namespace BeyondBarrier
                 CaptioningDescriptor.WriteRequested += DescriptorWriteRequestedCB;
                 CaptioningCharacteristic.ReadRequested += ReadRequestedCB;
                 CaptioningCharacteristic.WriteRequested += WriteRequestedCB;
+                CaptioningCharacteristic.ValueChanged += CharacteristicValueChangedCB;
                 CaptioningCharacteristic.NotificationStateChanged += NotificationStateChangedCB;
 
                 GattServer.Start();
@@ -119,12 +123,18 @@ namespace BeyondBarrier
                     e.Server.GetService(CaptioningServiceUuid).GetCharacteristic(CaptioningCharacteristicUuid).Value,
                     e.Offset);
 
-                await Task.Delay(1000);
-                CaptioningCharacteristic.SetValue("Test_valueChanged");
-                e.Server.SendNotification(CaptioningCharacteristic, e.ClientAddress);
-                await Task.Delay(1000);
-                CaptioningCharacteristic.SetValue("captionCharacter");
-                //ImageCaptionRequest();
+                //Manual Test
+                string imgPath = "http://www.econovill.com/news/photo/201807/342619_212106_2248.jpg";
+                await ImageCaptionRequestTest(imgPath);
+                Log.Info("BB_check", "Request completed");
+                if (CaptionResultString == null)
+                    Log.Debug("BB_check", "Request Response ERROR");
+                else Log.Debug("BB_check", "Response Value : " + CaptionResultString);
+
+                //e.Server.SendNotification(CaptioningCharacteristic, e.ClientAddress);                
+
+                // Change Characteristic's Value
+                // Send Notification to connected Device
             }
 
             public void WriteRequestedCB (object sender, WriteRequestedEventArgs e)
@@ -197,6 +207,13 @@ namespace BeyondBarrier
             {
                 Log.Info("BB_check", "advertise state changed");
             }
+
+            public void CharacteristicValueChangedCB(object sender, ValueChangedEventArgs e)
+            {
+                Log.Info("BB_check", "Characteristic Value changed");
+                GattServer.SendNotification(CaptioningCharacteristic, null);
+            }
+
             public void Dispose()
             {
                 Log.Info("BB_check", "Gatt Server Terminating");
@@ -205,24 +222,47 @@ namespace BeyondBarrier
                 GattServer.Dispose();
             }
 
-            public async void ImageCaptionRequest()
+            public async Task ImageCaptionRequestTest(string imgPath)
             {
-                using (var client = new HttpClient())
-                {
-                    var content = new
-                    {
-                        deviceId = "Tizen",
-                        imgPath = "http://www.econovill.com/news/photo/201807/342619_212106_2248.jpg",
-                        captureTime = "2023-03-09T13:46:11"
-                    };
-                    var json = JsonSerializer.Serialize(content);
-                    var httpContent = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync("", httpContent);
-                    var responseString = await response.Content.ReadAsStringAsync();
-                    // Handle response
-                    Log.Debug("BB_check", "Caption response : " + responseString);
+                // Create an instance of HttpClient
+                HttpClient client = new HttpClient();
 
-                }
+                // Create a JSON object to represent the request body
+                object requestBody = new
+                {
+                    deviceId = "Tizen",
+                    imgPath = imgPath,
+                    captureTime = "2023-03-09T13:46:11",
+                };
+
+                // Serialize the JSON object to a string
+                string requestBodyJson = JsonSerializer.Serialize(requestBody);
+
+                // Create a new StringContent object to represent the request body
+                StringContent requestBodyContent = new StringContent(requestBodyJson, Encoding.UTF8, "application/json");
+
+                // Send a POST request to the specified URL with the request body
+                var response = await client.PostAsync("http://18.191.139.106:5000/api/caption", requestBodyContent);
+
+                // Read the response content as a string
+                string content = await response.Content.ReadAsStringAsync();
+
+                CaptionResultData data = JsonSerializer.Deserialize<CaptionResultData>(content);
+
+                CaptionResultString = data.result;
+
+                // Dispose of the HttpClient instance
+                client.Dispose();
+            }
+
+            public static void ResponseDataHandler(string res)
+            {
+                // divide by 20 byte length, then send notification
+            }
+
+            public class CaptionResultData
+            {
+                public string result { get; set; }
             }
         }
     }

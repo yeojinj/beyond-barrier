@@ -4,7 +4,7 @@
     <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512" />
     <Reference URI="tizen-manifest.xml">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>T1yXFQchjPnjzCZAHC16rPB7pWYLHUvyG2bfaS6dDHCa4+LI3zv9qAxeSfMi7xd7s+C1CrjOGWTKLPUSovOAgQ==</DigestValue>
+      <DigestValue>QVfesRclM+PvvYeNB1XPhrpayQ6nEQi3F+KAoflXAuUDkMR+7yUq8BfeEimz33GgJOewRHB6T4GIMrEp5n8ERw==</DigestValue>
     </Reference>
     <Reference URI="shared%2Fres%2FBeyondBarrier.png">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
@@ -12,11 +12,11 @@
     </Reference>
     <Reference URI="bin%2FBeyondBarrier.pdb">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>8sJ8XABd5JICBgZJSqywoF0saiY5mahV2SaIL/Gb7MONnRmwWqcjHf+zxhfUtRXf6yzC9s/aivH30fL9x6sfxg==</DigestValue>
+      <DigestValue>UVw7+Mg/pEegbu2+U2jbStJzYuc9VoRSq5hP3vluFoEFoKrl/Z4RADqjW4JBL1BPARSetM9uawIfmKBAizi8PA==</DigestValue>
     </Reference>
     <Reference URI="bin%2FBeyondBarrier.dll">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>v9LD7bjYT0rUM5L6HOomlZV70OEI0dMUFE8/OZfkEdVAT7LixxaBd+fUgjZZZVwC13US6vXROo+l8US4NuCv3w==</DigestValue>
+      <DigestValue>P956yrj8DV0nvEr2Lfji6rNPCyEbbyx63lHCvBQ1mIf9mBBn1BJ2qg4v+gwnzzih/swKrjb99EwAHoU1DDo9nA==</DigestValue>
     </Reference>
     <Reference URI="BeyondBarrier.deps.json">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
@@ -24,7 +24,7 @@
     </Reference>
     <Reference URI="author-signature.xml">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>tNhjd/r/FqrL1Ilo6tjraq9Qanaue4ZtxWgu6d22r/+/UOrthugTR3cIovigKaOLxGhX57RKCwM+6Gz27acxTw==</DigestValue>
+      <DigestValue>yXJbr8i7vpG3qKe2aa6SXDh+qdxNeKMd7mFY3JPQyg7Sxv4h5urOA7+s584TxUP4CHmtR36Aj9pRyAn/Hfamag==</DigestValue>
     </Reference>
     <Reference URI="#prop">
       <Transforms>
@@ -35,9 +35,9 @@
     </Reference>
   </SignedInfo>
   <SignatureValue>
-RnKLn/JOd61J7gd5GrpN6Md/EyXyVB0VEE2KqgRo0nwpmyLHvrsO5z4ItbvDTtkYokOgBmP/3uZE
-KBd9ECR6zr+QhB5TiQaFQ2hjE5Af1zh4+Zg5naybiJ7FLYEngu7h8e3Ogu/qjVyrmE74ofKDpQzX
-2LfR5OlV8AphX8rYNiI=
+VXd9IjtIF8m2Th98e0pkIEpbLp/z/3PYml7iVIAWaSv26QwqriYhaqpc2FcgelXrd9pyoJV3oNO4
+tDJCh2Dkjod/TDFaiANSnPSbPniRGvmqBZbYMdH+wkU/RF+Wf8vjAWHytpJuPcU04AZlb74ezscg
+Aef3fc0I3XMw2mq7BZs=
 </SignatureValue>
   <KeyInfo>
     <X509Data>
