@@ -29,13 +29,13 @@ namespace BeyondBarrier
                 this.Exit();
             }
 
-            //Server Starts when created
-            BeyondBarrierBleServer BBBServer = new BeyondBarrierBleServer();
+            
         }
 
         protected override void OnAppControlReceived(AppControlReceivedEventArgs e)
         {
             base.OnAppControlReceived(e);
+            BeyondBarrierBleServer BBBServer = new BeyondBarrierBleServer();
         }
 
         protected override void OnTerminate()
@@ -58,7 +58,6 @@ namespace BeyondBarrier
             const string CaptioningCharacteristicUuid = "00001234-0000-1000-8000-00805f9b34fb";
             const string CaptioningCharacteristicValue = "initValue";
             const string CaptioningDescriptorUuid = "00005678-0000-1000-8000-00805f9b34fb";
-            const string CaptioningDescriptorValue = "abcde";
             public string CaptionResultString = "empty result";
             public BluetoothGattServer GattServer;
             public BluetoothGattService CaptioningService;
@@ -72,16 +71,17 @@ namespace BeyondBarrier
             {
                 // Init GattServer, Creating Service and Characteristic
                 GattServer = BluetoothGattServer.CreateServer();
+               
                 CaptioningService = new BluetoothGattService(CaptioningServiceUuid, BluetoothGattServiceType.Primary);
                 CaptioningCharacteristic = new BluetoothGattCharacteristic(CaptioningCharacteristicUuid,
-                    BluetoothGattPermission.Read | BluetoothGattPermission.Write,
-                    BluetoothGattProperty.Read | BluetoothGattProperty.Write
-                    | BluetoothGattProperty.Notify | BluetoothGattProperty.ExtendedProperties,
+                    BluetoothGattPermission.Read,
+                    BluetoothGattProperty.Read
+                    | BluetoothGattProperty.Notify,
                     Encoding.Default.GetBytes(CaptioningCharacteristicValue));
                 CaptioningDescriptor = new BluetoothGattDescriptor(
                     CaptioningDescriptorUuid,
-                    BluetoothGattPermission.Read | BluetoothGattPermission.Write,
-                    Encoding.Default.GetBytes(CaptioningDescriptorValue));
+                    BluetoothGattPermission.Read,
+                    new byte[1] { 0x01 });
 
                 CaptioningCharacteristic.AddDescriptor(CaptioningDescriptor);
                 CaptioningService.AddCharacteristic(CaptioningCharacteristic);
@@ -94,22 +94,28 @@ namespace BeyondBarrier
                 CaptioningCharacteristic.WriteRequested += WriteRequestedCB;
                 CaptioningCharacteristic.ValueChanged += CharacteristicValueChangedCB;
                 CaptioningCharacteristic.NotificationStateChanged += NotificationStateChangedCB;
+                GattServer.NotificationSent += NotificationSentCB;
 
-                GattServer.Start();
-                Log.Info("BB_check", "Bluetooth GATT Server Started");
+               
 
                 // setting Advertising options
                 BleAdvertiser = BluetoothAdapter.GetBluetoothLeAdvertiser();
-                BleAdvertiser.AdvertisingStateChanged += AdvertisingStateChangedCB;
+                
                 BleAdvertiseData = new BluetoothLeAdvertiseData();
                 BleAdvertiseData.AdvertisingConnectable = true;
                 BleAdvertiseData.IncludeDeviceName = true;
                 BleAdvertiseData.AdvertisingMode = BluetoothLeAdvertisingMode.BluetoothLeAdvertisingBalancedMode;
+                BleAdvertiseData.IncludeTxPowerLevel = false;
 
                 BleAdvertiseData.AddAdvertisingServiceUuid(BluetoothLePacketType.BluetoothLeScanResponsePacket, CaptioningServiceUuid);
+                BleAdvertiser.AdvertisingStateChanged += AdvertisingStateChangedCB;
+
+                GattServer.Start();
+                Log.Info("BB_check", "Bluetooth GATT Server Started");
 
                 BleAdvertiser.StartAdvertising(BleAdvertiseData);
                 Log.Info("BB_check", "Bluetooth Advertise Started");
+                
             }
 
             public async void ReadRequestedCB (object sender, ReadRequestedEventArgs e)
@@ -124,14 +130,10 @@ namespace BeyondBarrier
                     e.Offset);
 
                 //Manual Test
-                string imgPath = "http://www.econovill.com/news/photo/201807/342619_212106_2248.jpg";
-                await ImageCaptionRequestTest(imgPath);
-                Log.Info("BB_check", "Request completed");
-                if (CaptionResultString == null)
-                    Log.Debug("BB_check", "Request Response ERROR");
-                else Log.Debug("BB_check", "Response Value : " + CaptionResultString);
+                // await HttpRequestTest();
 
-                //e.Server.SendNotification(CaptioningCharacteristic, e.ClientAddress);                
+                //Manual Test
+                // await NotiTest();
 
                 // Change Characteristic's Value
                 // Send Notification to connected Device
@@ -185,22 +187,12 @@ namespace BeyondBarrier
 
             public void NotificationSentCB(object sender, NotificationSentEventArg e)
             {
-                GattServer.NotificationSent -= NotificationSentCB;
                 Log.Info("BB_check", "Notification sent from Gatt server");
-                Log.Debug("BB_check", e.ClientAddress);
             }
 
-            public async void NotificationStateChangedCB(object sender, NotificationStateChangedEventArg e)
+            public void NotificationStateChangedCB(object sender, NotificationStateChangedEventArg e)
             {
                 Log.Info("BB_check", "notification state changed");
-                Log.Debug("BB_check", e.Value.ToString());
-                GattServer.NotificationSent += NotificationSentCB;
-
-                CaptioningCharacteristic.SetValue("Caption Response");
-                await e.Server.SendIndicationAsync(CaptioningCharacteristic, null);
-                Log.Debug("BB_check", "noti sent");
-
-                CaptioningCharacteristic.SetValue("012345678901234567890");
             }
 
             public void AdvertisingStateChangedCB(object sender, AdvertisingStateChangedEventArgs e)
@@ -211,7 +203,6 @@ namespace BeyondBarrier
             public void CharacteristicValueChangedCB(object sender, ValueChangedEventArgs e)
             {
                 Log.Info("BB_check", "Characteristic Value changed");
-                GattServer.SendNotification(CaptioningCharacteristic, null);
             }
 
             public void Dispose()
@@ -258,6 +249,27 @@ namespace BeyondBarrier
             public static void ResponseDataHandler(string res)
             {
                 // divide by 20 byte length, then send notification
+            }
+
+            public async Task HttpRequestTest()
+            {
+                string imgPath = "http://www.econovill.com/news/photo/201807/342619_212106_2248.jpg";
+                await ImageCaptionRequestTest(imgPath);
+                Log.Info("BB_check", "Request completed");
+                if (CaptionResultString == null)
+                    Log.Debug("BB_check", "Request Response ERROR");
+                else Log.Debug("BB_check", "Response Value : " + CaptionResultString);
+            }
+
+            public async Task NotiTest()
+            {
+                CaptioningCharacteristic.SetValue("Test_valueChanged");
+                await Task.Delay(1000);
+
+                e.Server.SendNotification(CaptioningCharacteristic, e.ClientAddress.ToString());
+
+                await Task.Delay(1000);
+                CaptioningCharacteristic.SetValue("initValue");
             }
 
             public class CaptionResultData

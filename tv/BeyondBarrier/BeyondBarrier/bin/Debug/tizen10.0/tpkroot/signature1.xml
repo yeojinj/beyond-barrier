@@ -12,11 +12,11 @@
     </Reference>
     <Reference URI="bin%2FBeyondBarrier.pdb">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>UVw7+Mg/pEegbu2+U2jbStJzYuc9VoRSq5hP3vluFoEFoKrl/Z4RADqjW4JBL1BPARSetM9uawIfmKBAizi8PA==</DigestValue>
+      <DigestValue>i8kZvk8/i3hJjMqKORUkHCTvf2o/Sx763XWCpd12XdKahxMnf/AsVXKeUwQGzx+FMsKFe3X2crY9b+3PPcQREA==</DigestValue>
     </Reference>
     <Reference URI="bin%2FBeyondBarrier.dll">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>P956yrj8DV0nvEr2Lfji6rNPCyEbbyx63lHCvBQ1mIf9mBBn1BJ2qg4v+gwnzzih/swKrjb99EwAHoU1DDo9nA==</DigestValue>
+      <DigestValue>rhAaceeCLVVuAeIjxPcEf9TLPdR5nQdMssf7BtuUruRnF/eTq9nkCoN1EDHle0YOcK8M2VlemMifT7BXeo0OSw==</DigestValue>
     </Reference>
     <Reference URI="BeyondBarrier.deps.json">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
@@ -24,7 +24,7 @@
     </Reference>
     <Reference URI="author-signature.xml">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>yXJbr8i7vpG3qKe2aa6SXDh+qdxNeKMd7mFY3JPQyg7Sxv4h5urOA7+s584TxUP4CHmtR36Aj9pRyAn/Hfamag==</DigestValue>
+      <DigestValue>twSrgnWEjAAl1mloW8ZS78x7MOdYOd2YOFpgyVTfje2hQOjgGJ/3Ntm9VvhKna82+bkKTvZnFsY2oLiNuUV50A==</DigestValue>
     </Reference>
     <Reference URI="#prop">
       <Transforms>
@@ -35,9 +35,9 @@
     </Reference>
   </SignedInfo>
   <SignatureValue>
-VXd9IjtIF8m2Th98e0pkIEpbLp/z/3PYml7iVIAWaSv26QwqriYhaqpc2FcgelXrd9pyoJV3oNO4
-tDJCh2Dkjod/TDFaiANSnPSbPniRGvmqBZbYMdH+wkU/RF+Wf8vjAWHytpJuPcU04AZlb74ezscg
-Aef3fc0I3XMw2mq7BZs=
+AB9yZatnvLNRPxQucO/+YxyXYn2O6qCftqo7aBs2riROo8odLp7HyAJ44UspOotOU2MHWISs//zE
+JiDrMLMkG0CQA7rxl7wp2+R5hAw3feTABQOBU+wM4bUs40/gTp0+hmfN0Y8R94tPMW0E4zZggdZV
+hDT/ZH2GzVMu66VS5Ds=
 </SignatureValue>
   <KeyInfo>
     <X509Data>
