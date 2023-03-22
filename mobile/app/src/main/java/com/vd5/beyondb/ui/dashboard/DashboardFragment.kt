@@ -2,28 +2,30 @@ package com.vd5.beyondb.ui.dashboard
 
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.bumptech.glide.Glide
 import com.vd5.beyondb.databinding.FragmentDashboardBinding
-import com.vd5.beyondb.util.Cat
-import com.vd5.beyondb.util.RetrofitService
+import com.vd5.beyondb.util.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.util.*
 
 
 class DashboardFragment : Fragment() {
 
 
     lateinit var binding : FragmentDashboardBinding
+    private var textToSpeech: TextToSpeech? = null
 
-    private val retrofit = Retrofit.Builder().baseUrl("https://api.thecatapi.com/v1/images/")
+    private val retrofit = Retrofit.Builder().baseUrl("http://18.191.139.106:5000/api/")
         .addConverterFactory(GsonConverterFactory.create()).build();
     val service = retrofit.create(RetrofitService::class.java);
 
@@ -37,44 +39,75 @@ class DashboardFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentDashboardBinding.inflate(inflater,container,false)
-        val dashboardBtn = binding.buttonDashboard
+        TTSinit()
+
+        val dashboardBtn : Button = binding.buttonDashboard
         val dashboardText = binding.textDashboard
-        val dashboardImage = binding.imageDashboard
+
+
         var url : String? = null
         dashboardBtn.setOnClickListener {
+            dashboardText.text = ""
+            dashboardBtn.isEnabled = false
+            dashboardBtn.text = "processing.."
 
+            val programRequest = ProgramRequest( deviceId = "", imgPath = "https://beyondb-bucket.s3.ap-northeast-2.amazonaws.com/capture/live.png",   captureTime = "2023-03-20T16:25:00" )
 
-
-            service.getCat()?.enqueue(object : Callback<List<Cat>> {
-                override fun onResponse(call: Call<List<Cat>>, response: Response<List<Cat>>) {
+            service.getProgram(programRequest)?.enqueue(object : Callback<Program> {
+                override fun onResponse(call: Call<Program>, response: Response<Program>) {
                     if(response.isSuccessful){
-                        var result: List<Cat>? = response.body()
-                        Log.d("YMC", "onResponse 성공: " + result?.toString());
-                        url = response?.body()?.get(0)?.url
-                        dashboardText.text = url
+                        var programText: Program? = response.body()
+                        Log.d("http", "onResponse 성공: ${programText}")
 
-                        Glide.with(this@DashboardFragment)
-                            .load(url)
-                            .override(400,300)
-                            .into(dashboardImage)
+                        var returnText : String = "프로그램 이름은 "+ programText?.programName + " 입니다."
+
+                        TTSrun(returnText)
+                        dashboardText.text = returnText
                     }else{
-                        Log.d("YMC", "onResponse 실패")
+                        Log.d("http", "onResponse 실패")
                     }
-                }
 
-                override fun onFailure(call: Call<List<Cat>>, t: Throwable) {
-                    Log.d("YMC", "onFailure 에러: " + t.message.toString());
+
+                    dashboardBtn.isEnabled = true
+                    dashboardBtn.text = "PROGRAM"
+
+                }
+                override fun onFailure(call: Call<Program>, t: Throwable) {
+                    Log.d("http", "onFailure 에러: " + t.message.toString());
                 }
             })
-
         }
-
-
         return binding.root
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        if(textToSpeech != null){
+            textToSpeech?.stop()
+            textToSpeech?.shutdown()
+            textToSpeech = null
+        }
 //        _binding = null
     }
+
+    fun TTSrun(string: String) {
+        textToSpeech?.speak(string, TextToSpeech.QUEUE_FLUSH, null, null)
+        textToSpeech?.playSilentUtterance(750, TextToSpeech.QUEUE_ADD,null) // deley시간 설정
+    }
+
+    fun TTSinit() {
+        textToSpeech = TextToSpeech(this.context, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                val result = textToSpeech!!.setLanguage(Locale.KOREAN)
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    Log.e("TTS","해당언어는 지원되지 않습니다.")
+                    return@OnInitListener
+                }
+                textToSpeech!!.setSpeechRate(1.0f)
+            }
+        })
+    }
+
+
+
 }
