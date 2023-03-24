@@ -17,17 +17,17 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import android.view.accessibility.AccessibilityNodeInfo
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat.registerReceiver
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
-import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.navigation.NavigationBarView
 import com.vd5.beyondb.databinding.ActivityMainBinding
 import com.vd5.beyondb.service.BluetoothLeService
+import com.vd5.beyondb.ui.dashboard.DashboardFragment
+import com.vd5.beyondb.ui.home.HomeFragment
+import com.vd5.beyondb.ui.notifications.NotificationsFragment
+import com.vd5.beyondb.ui.settings.SettingsFragment
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -36,9 +36,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Bluetooth 관련 코드
-            // 권한 요청하기
+        // 권한 요청하기
         ActivityCompat.requestPermissions(this, PERMISSIONS_BT, REQUEST_ALL_PERMISSION)
-            // bluetooth가 꺼져있는 경우 켜기
+        // bluetooth가 꺼져있는 경우 켜기
         if (bluetoothAdapter != null) {
             if (bluetoothAdapter?.isEnabled == false) {
                 bluetoothOn()
@@ -57,18 +57,52 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val navView: BottomNavigationView = binding.navView
 
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications
-            )
-        )
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        navView.setupWithNavController(navController)
+        val navigationBarView = findViewById<NavigationBarView>(R.id.nav_view)
+        navigationBarView.setOnItemSelectedListener(NavigationBarView.OnItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_home -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, HomeFragment()).commit()
+                    return@OnItemSelectedListener true
+                }
+                R.id.navigation_dashboard -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, DashboardFragment()).commit()
+                    return@OnItemSelectedListener true
+                }
+                R.id.navigation_notifications -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, NotificationsFragment()).commit()
+                    return@OnItemSelectedListener true
+                }
+                R.id.navigation_settings -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, SettingsFragment()) .commit()
+                    return@OnItemSelectedListener true
+                }
+            }
+            false
+        })
+
+
+
+
+
+
+
+
+
+
+//        val navView: BottomNavigationView = binding.navView
+//
+//        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+//        // Passing each menu ID as a set of Ids because each
+//        // menu should be considered as top level destinations.
+////        val appBarConfiguration = AppBarConfiguration(
+////            setOf(
+////                R.id.navigation_home, R.id.navigation_dashboard, R.id.navigation_notifications, R.id.navigation_settings
+////            )
+////        )
+////        setupActionBarWithNavController(navController, appBarConfiguration)
+////
+//        navView.setupWithNavController(navController)
     }
 
     private val PERMISSIONS_BT = arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE)
