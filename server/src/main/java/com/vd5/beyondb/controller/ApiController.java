@@ -24,13 +24,14 @@ public class ApiController {
     @Autowired
     private ProgramService programService;
 
-    String baseUrl = "http://70.12.130.121:5000/";      // ML server URL
+    String mlBaseUrl = "http://70.12.130.121:5000/";      // ML server URL
+    String crawlingBaseUrl = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=";        // Naver search URL
 
     @PostMapping(path="/caption")
     public ResponseEntity<CaptionDto> captionImage(@RequestBody CaptureDto captureDto){
         CaptureMlDto captureMlDto = new CaptureMlDto(captureDto.getImgPath());  // request dto to ML server
         RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.postForObject(baseUrl + "s3/imagecaption", captureMlDto, String.class);
+        String result = restTemplate.postForObject(mlBaseUrl + "s3/imagecaption", captureMlDto, String.class);
         CaptionDto captionDto = new CaptionDto(result);
         return new ResponseEntity<>(captionDto, HttpStatus.OK);
     }
@@ -40,7 +41,7 @@ public class ApiController {
         log.info("===== detectLogo() =====");
         CaptureMlDto captureMlDto = new CaptureMlDto(captureDto.getImgPath());  // request dto to ML server
         RestTemplate restTemplate = new RestTemplate();
-        int programId = Integer.parseInt(restTemplate.postForObject(baseUrl + "s3/logodetect", captureMlDto, String.class));
+        int programId = Integer.parseInt(restTemplate.postForObject(mlBaseUrl + "s3/logodetect", captureMlDto, String.class));
         Program program = programService.findById(programId);       // get program name from DB by program id
         DetectDto detectDto = new DetectDto(program.getId(), program.getName());
         return new ResponseEntity<>(detectDto, HttpStatus.OK);
