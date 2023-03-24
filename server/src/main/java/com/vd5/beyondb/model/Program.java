@@ -2,11 +2,14 @@ package com.vd5.beyondb.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import lombok.Getter;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
+@EntityListeners(AuditingEntityListener.class)
 public class Program {
 
     @Id
@@ -17,5 +20,9 @@ public class Program {
 
     @Column(name = "content", length = 1000)
     private String content;
+
+    public void updateContent(String content) {
+        this.content = content;
+    }
 
 }
