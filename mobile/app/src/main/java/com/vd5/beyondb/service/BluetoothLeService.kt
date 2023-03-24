@@ -7,8 +7,20 @@ import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter.EXTRA_DATA
 import android.os.Binder
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.util.Log
+import com.bumptech.glide.Glide
+import com.vd5.beyondb.MainActivity
+import com.vd5.beyondb.util.Caption
+import com.vd5.beyondb.util.ProgramDetail
+import com.vd5.beyondb.util.RetrofitService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 
 
@@ -74,6 +86,7 @@ class BluetoothLeService: Service() {
                 broadcastUpdate(ACTION_GATT_DISCONNECTED)
             }
         }
+
         override fun onServicesDiscovered(gatt: BluetoothGatt?, status: Int) {
             Log.d(TAG, "onServicesDiscovered: " + gatt?.services)
             if (status == BluetoothGatt.GATT_SUCCESS) {
@@ -84,16 +97,65 @@ class BluetoothLeService: Service() {
             }
         }
 
+        private val baseUrl = "http://18.191.139.106:5000/api/"
+
         override fun onCharacteristicRead(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic,
             value: ByteArray,
             status: Int
         ) {
-            Log.d(TAG, "onCharacteristicRead: 콜백 $status")
-            if (status == BluetoothGatt.GATT_SUCCESS) {
-                Log.d(TAG, "onCharacteristicRead: $status")
-                broadcastUpdate(ACTION_DATA_AVAILABLE, characteristic)
+            Log.d(TAG, "readValue: ${String(value)}")
+            if (String(value) != requestDefault) {
+                if (String(value) != resultDefault) {
+                    pollingState = false
+                    var charaUuid = characteristic.uuid.toString()
+                    if (charaUuid == UUID_CAPTION_RESULT) {
+                        // TODO 받은 갭셔닝 번호를 서버에 요청하기
+                        val retrofit = Retrofit.Builder().baseUrl(baseUrl)
+                            .addConverterFactory(GsonConverterFactory.create()).build();
+                        val service = retrofit.create(RetrofitService::class.java);
+                        val captionNum = String(characteristic.value)
+                        service.getCaption(captionNum)?.enqueue(object : Callback<Caption> {
+                            override fun onResponse(call: Call<Caption>, response: Response<Caption>) {
+                                if(response.isSuccessful){
+                                    var result: Caption? = response.body()
+                                    Log.d(TAG, "onResponse 성공: " + result?.result)
+                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result?.result!!)
+                                }else{
+                                    Log.d(TAG, "onResponse 실패")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Caption>, t: Throwable) {
+                                Log.d(TAG, "onFailure 에러: " + t.message.toString());
+                            }
+                        })
+
+                    } else if (charaUuid == UUID_PROGRAM_RESULT) {
+                        broadcastUpdate(ACTION_GATT_PROGRAM, characteristic)
+                        // TODO 받은 프로그램 번호를 서버에 요청하기
+                        val retrofit = Retrofit.Builder().baseUrl(baseUrl)
+                            .addConverterFactory(GsonConverterFactory.create()).build();
+                        val service = retrofit.create(RetrofitService::class.java);
+                        val programNum = String(characteristic.value)
+                        service.getProgram(programNum)?.enqueue(object : Callback<ProgramDetail> {
+                            override fun onResponse(call: Call<ProgramDetail>, response: Response<ProgramDetail>) {
+                                if(response.isSuccessful){
+                                    var result: ProgramDetail? = response.body()
+                                    Log.d(TAG, "onResponse 성공: ${result?.programId}")
+//                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result)
+                                }else{
+                                    Log.d(TAG, "onResponse 실패")
+                                }
+                            }
+
+                            override fun onFailure(call: Call<ProgramDetail>, t: Throwable) {
+                                Log.d(TAG, "onFailure 에러: " + t.message.toString());
+                            }
+                        })
+                    }
+                }
             }
         }
 
@@ -106,8 +168,16 @@ class BluetoothLeService: Service() {
         }
 
     }
+
+
     private fun broadcastUpdate(action: String) {
         val intent = Intent(action)
+        sendBroadcast(intent)
+    }
+
+    private fun broadcastUpdate(action: String, content: String) {
+        val intent = Intent(action)
+        intent.putExtra(EXTRA_DATA, content)
         sendBroadcast(intent)
     }
 
@@ -135,6 +205,12 @@ class BluetoothLeService: Service() {
         }
     }
 
+    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
+    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
+
+    private val requestDefault = "0"
+    private val resultDefault = "-1"
+
     fun getSupportedGattServices(): List<BluetoothGattService?>? {
         return bluetoothGatt?.services
     }
@@ -144,33 +220,47 @@ class BluetoothLeService: Service() {
         bluetoothGatt?.let { gatt ->
             Log.d(TAG, "readCharacteristic: 읽기 시작")
             gatt.readCharacteristic(characteristic)
-            Log.d(TAG, "readCharacteristic: 읽기2")
         } ?: run {
             Log.w(TAG, "BluetoothGatt not initialized")
             return
         }
     }
 
-//    private val UUID_NOTIFY = "00005678-0000-1000-8000-00805f9b34fb"
-    private val UUID_NOTIFY = "00002902-0000-1000-8000-00805f9b34fb"
+
+    private var pollingState = false
 
     @SuppressLint("MissingPermission")
-    fun setCharacteristicNotification(
-        characteristic: BluetoothGattCharacteristic,
-        enabled: Boolean
-    ) {
-        bluetoothGatt?.let { gatt ->
-            gatt.setCharacteristicNotification(characteristic, enabled)
-//
-//            for (descriptor in characteristic.descriptors) {
-//                Log.e(TAG, "BluetoothGattDescriptor: " + descriptor.uuid.toString())
-//            }
-//            val descriptor = characteristic.getDescriptor(UUID.fromString(UUID_NOTIFY))
-//            descriptor.value = BluetoothGattDescriptor.ENABLE_INDICATION_VALUE
-//            gatt.writeDescriptor(descriptor)
-        } ?: run {
-            Log.w(TAG, "BluetoothGatt not initialized")
-        }
+    fun resultPolling(gattCharacteristic: BluetoothGattCharacteristic) {
+        pollingState = true
+        if (bluetoothGatt == null) return
+        //타이머 객체 선언
+        var t_timer = Timer()
+        // 반복 횟수
+        var count = 0
+        //타이머 동작 시간 지정 및 작업 내용 지정
+        t_timer.schedule(object : TimerTask(){
+            override fun run(){
+                println("${count}")
+                //카운트 값 증가
+                count++
+                //카운트 값이 15초가되면 타이머 종료
+                if(count > 60) {
+                    var charaUuid = gattCharacteristic.uuid.toString()
+                    if (charaUuid == UUID_CAPTION_RESULT) broadcastUpdate(ACTION_GATT_CAPTIONING, "요청에 실패하였습니다. 재요청 해주세요.")
+                    if (charaUuid == UUID_PROGRAM_RESULT) broadcastUpdate(ACTION_GATT_PROGRAM, "요청에 실패하였습니다. 재요청 해주세요.")
+                    println("[polling 요청 초과]")
+                    t_timer.cancel()
+                } else if (!pollingState){
+                    println("[polling 종료]")
+                    t_timer.cancel()
+                } else bluetoothGatt?.readCharacteristic(gattCharacteristic)
+            }
+        },0, 250) // 바로 실행, 1초에 4회 요청
+        println("[polling 시작]")
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun polling(gattCharacteristic: BluetoothGattCharacteristic) {
     }
 
     companion object {
@@ -183,6 +273,8 @@ class BluetoothLeService: Service() {
             "com.example.bluetooth.le.ACTION_DATA_AVAILABLE"
         const val ACTION_GATT_CAPTIONING =
             "com.vd5.bluetooth.le.ACTION_GATT_CAPTIONING"
+        const val ACTION_GATT_PROGRAM =
+            "com.vd5.bluetooth.le.ACTION_GATT_PROGRAM"
 
         private const val STATE_DISCONNECTED = 0
         private const val STATE_CONNECTED = 2

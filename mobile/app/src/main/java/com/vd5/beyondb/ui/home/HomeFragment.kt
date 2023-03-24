@@ -63,6 +63,19 @@ class HomeFragment : Fragment(), View.OnClickListener {
                     val textView = _binding.textCaption
                     textView.text = receivingData
                 }
+                BluetoothLeService.ACTION_GATT_CONNECTED -> {
+                    _binding.textConnection.text = "연결됨"
+                }
+                BluetoothLeService.ACTION_GATT_DISCONNECTED -> {
+                    _binding.textConnection.text = "연결 안 됨"
+                }
+                BluetoothLeService.ACTION_GATT_CAPTIONING -> {
+                    Log.d(TAG, "onReceive: captioning 결과")
+                    val receivingData = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
+                    Log.d(TAG, "captioning 결과 : $receivingData")
+                    val textView = _binding.textCaption
+                    textView.text = receivingData
+                }
             }
         }
     }
@@ -80,6 +93,9 @@ class HomeFragment : Fragment(), View.OnClickListener {
     private fun makeGattUpdateIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(BluetoothLeService.ACTION_DATA_AVAILABLE)
+            addAction(BluetoothLeService.ACTION_GATT_CONNECTED)
+            addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED)
+            addAction(BluetoothLeService.ACTION_GATT_CAPTIONING)
         }
     }
 

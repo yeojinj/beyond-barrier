@@ -18,9 +18,6 @@ data class Program(
     val programName: String,
 )
 
-
-
-
 data class CaptionRequest(
     @SerializedName("deviceId")
     val deviceId: String,
@@ -48,4 +45,9 @@ data class Result (
     var tarLangType: String = "",
     var translatedText: String = ""
 )
-////////////////////////////////////
+
+data class ProgramDetail(
+    // TODO 프로그램 정보 포맷 입력 필요
+    @SerializedName("programId")
+    val programId: String,
+)

@@ -4,6 +4,7 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothAdapter.*
+import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.BluetoothGattService
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.ScanCallback
@@ -72,10 +73,7 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, NotificationsFragment()).commit()
                     return@OnItemSelectedListener true
                 }
-                R.id.navigation_settings -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, SettingsFragment()) .commit()
-                    return@OnItemSelectedListener true
-                }
+
             }
             false
         })
@@ -103,8 +101,6 @@ class MainActivity : AppCompatActivity() {
 ////
 //        navView.setupWithNavController(navController)
     }
-
-
 
     private val PERMISSIONS_BT = arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE)
     private val REQUEST_ENABLE_BT=1
@@ -167,11 +163,10 @@ class MainActivity : AppCompatActivity() {
                 bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
                 // TODO : 장치를 찾았으므로 스캔 종료 필요 !!!
                 scanning = false
-                bluetoothAdapter?.bluetoothLeScanner?.stopScan(stopScancallback as ScanCallback?)
+                bluetoothAdapter?.bluetoothLeScanner?.stopScan(this)
             }
         }
     }
-    private val stopScancallback = object: ScanCallback() {}
 
     var connectionState = STATE_DISCONNECTED
 
@@ -223,52 +218,51 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //    private val UUID_READ = "00001234-0000-1000-8000-00805f9b34fb"
-//    private val UUID_READ = "24c33316-87b2-4159-9dbd-87d730e27745"
-    private val UUID_READ = "5d3f4a23-cab6-4123-8c3a-71b75bf63fb2"
+//    private val SERVICE_UUID = "00005555-0000-1000-8000-555555555555"
+//
+//    // TODO UUID 설정 필요
+//    private val UUID_CAPTION_REQUEST = "00ca58e9-0000-1000-8000-555555555555"
+//    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
+//    private val UUID_PROGRAM_REQUEST = "00d158e9-0000-1000-8000-555555555555"
+//    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
+
+
+    private val SERVICE_UUID = "1002a1d6-39db-43e8-b45e-c4a000543e53"
 
     // TODO UUID 설정 필요
-//    private val UUID_CAPTION = "00005555-0000-1000-8000-00805f9b34fb"
-//    private val UUID_PROGRAM = "00005555-0000-1000-8000-00805f9b34fb"
+    private val UUID_CAPTION_REQUEST = "24c33316-87b2-4159-9dbd-87d730e27745"
+    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
+    private val UUID_PROGRAM_REQUEST = "1e2d05d0-bcf5-4f0e-a28d-f5ee7b1df4cc"
+    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
 
-    private val UUID_CAPTION = "4a3bb1de-9fb9-4237-ab33-ae6ebebc643f"
-    private val UUID_PROGRAM = "4a3bb1de-9fb9-4237-ab33-ae6ebebc643f"
 
     private fun accessGattServices(gattServices: List<BluetoothGattService?>?) {
         Log.d(TAG, "accessGattServices: 서비스 접근 메소드")
         if (gattServices == null) return
-        var uuid: String?
         gattServices.forEach { gattService ->
             Log.d(TAG, "accessGattServices: service UUID ${gattService?.uuid}")
-            ///////
             var serviceUuid: String = gattService?.uuid.toString()
-            if (serviceUuid == UUID_CAPTION) {
-                captionService = gattService
-                Log.d(TAG, "captionService: ${captionService?.uuid}")
-            } else if (serviceUuid == UUID_PROGRAM){
-                programService = gattService
-                Log.d(TAG, "programService: ${programService?.uuid}")
+            if (serviceUuid == SERVICE_UUID) {
+                beyondService = gattService
+                Log.d(TAG, "captionService: ${beyondService?.uuid}")
+                beyondService?.characteristics?.forEach { gattCharacteristic ->
+                    Log.d(TAG, "accessGattServices: ${gattCharacteristic.uuid}")
+                    var characteristicUuid: String = gattCharacteristic.uuid.toString()
+                    if (characteristicUuid == UUID_CAPTION_REQUEST) captionRequestCharacteristic = gattCharacteristic
+                    else if (characteristicUuid == UUID_CAPTION_RESULT) captionResultCharacteristic = gattCharacteristic
+                    else if (characteristicUuid == UUID_PROGRAM_REQUEST) programRequestCharacteristic = gattCharacteristic
+                    else if (characteristicUuid == UUID_PROGRAM_RESULT) programResultCharacteristic = gattCharacteristic
+                }
             }
-            ///////
-
-//            uuid = gattService?.uuid.toString()
-//            Log.d(TAG, "accessGattServices: $uuid")
-//            val gattCharacteristics = gattService?.characteristics
-//            gattCharacteristics?.forEach { gattCharacteristic ->
-//                uuid = gattCharacteristic.uuid.toString()
-//                Log.d(TAG, "accessGattServices: characteristic $uuid")
-//                if (uuid.equals(UUID_READ)) {
-//                    Log.d(TAG, "accessGattServices: READ 요청")
-//                    bluetoothService?.readCharacteristic(gattCharacteristic)
-//                    Log.d(TAG, "accessGattServices: NOTIFY 시작")
-//                    bluetoothService?.setCharacteristicNotification(gattCharacteristic, true)
-//                }
-//            }
         }
     }
 
-    private var captionService: BluetoothGattService? = null
-    private var programService: BluetoothGattService? = null
+    private var beyondService: BluetoothGattService? = null
+
+    private var captionRequestCharacteristic: BluetoothGattCharacteristic? = null
+    private var captionResultCharacteristic: BluetoothGattCharacteristic? = null
+    private var programRequestCharacteristic: BluetoothGattCharacteristic? = null
+    private var programResultCharacteristic: BluetoothGattCharacteristic? = null
 
 
     /**
@@ -276,19 +270,15 @@ class MainActivity : AppCompatActivity() {
      * captioning fragment 에서 호출
      */
     fun captioningRequest() {
-        Log.d(TAG, "captioning Service UUID: ${captionService?.uuid}")
-        val gattCharacteristics = captionService?.characteristics
-        var uuid: String? = null
-        gattCharacteristics?.forEach { gattCharacteristic ->
-            uuid = gattCharacteristic.uuid.toString()
-            Log.d(TAG, "accessGattServices: characteristic $uuid")
-            if (uuid.equals(UUID_READ)) {
-                Log.d(TAG, "accessGattServices: READ 요청")
-                bluetoothService?.readCharacteristic(gattCharacteristic)
-                Log.d(TAG, "accessGattServices: NOTIFY 시작")
-                bluetoothService?.setCharacteristicNotification(gattCharacteristic, true)
-            }
-        }
+        // 일단 read 요청 한 번 보내기
+        // result read 나올 때까지 계속 읽기
+        if (captionRequestCharacteristic == null) return
+        bluetoothService?.readCharacteristic(captionRequestCharacteristic!!)
+        if (captionResultCharacteristic == null) return
+        Log.d(TAG, "captioningRequest: polling 시작")
+        Handler(Looper.getMainLooper()).postDelayed({
+            bluetoothService?.resultPolling(captionResultCharacteristic!!)
+        }, 500)
     }
 
     /**
@@ -296,19 +286,7 @@ class MainActivity : AppCompatActivity() {
      * program fragment 에서 호출
      */
     fun programRequest() {
-        Log.d(TAG, "program Service UUID: ${captionService?.uuid}")
-        val gattCharacteristics = programService?.characteristics
-        var uuid: String? = null
-        gattCharacteristics?.forEach { gattCharacteristic ->
-            uuid = gattCharacteristic.uuid.toString()
-            Log.d(TAG, "accessGattServices: characteristic $uuid")
-            if (uuid.equals(UUID_READ)) {
-                Log.d(TAG, "accessGattServices: READ 요청")
-                bluetoothService?.readCharacteristic(gattCharacteristic)
-                Log.d(TAG, "accessGattServices: NOTIFY 시작")
-                bluetoothService?.setCharacteristicNotification(gattCharacteristic, true)
-            }
-        }
+
     }
 
     override fun onResume() {
