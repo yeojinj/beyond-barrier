@@ -7,8 +7,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityEvent
+import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Button
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.findFragment
+import com.vd5.beyondb.MainActivity
+import com.vd5.beyondb.databinding.ActivityMainBinding
 import com.vd5.beyondb.databinding.FragmentDashboardBinding
 import com.vd5.beyondb.util.*
 import retrofit2.Call
@@ -23,6 +30,8 @@ class DashboardFragment : Fragment() {
 
 
     lateinit var binding : FragmentDashboardBinding
+    lateinit var binding2: ActivityMainBinding
+
     private var textToSpeech: TextToSpeech? = null
 
     private val retrofit = Retrofit.Builder().baseUrl("http://18.191.139.106:5000/api/")
@@ -38,45 +47,89 @@ class DashboardFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+
         binding = FragmentDashboardBinding.inflate(inflater,container,false)
+        binding2 = ActivityMainBinding.inflate(layoutInflater)
         TTSinit()
 
         val dashboardBtn : Button = binding.buttonDashboard
         val dashboardText = binding.textDashboard
 
 
+
+
         var url : String? = null
-        dashboardBtn.setOnClickListener {
-            dashboardText.text = ""
-            dashboardBtn.isEnabled = false
-            dashboardBtn.text = "processing.."
 
-            val programRequest = ProgramRequest( deviceId = "", imgPath = "https://beyondb-bucket.s3.ap-northeast-2.amazonaws.com/capture/live.png",   captureTime = "2023-03-20T16:25:00" )
+        dashboardText.text = ""
+        dashboardBtn.isEnabled = false
+        dashboardBtn.text = "processing.."
 
-            service.getProgram(programRequest)?.enqueue(object : Callback<Program> {
-                override fun onResponse(call: Call<Program>, response: Response<Program>) {
-                    if(response.isSuccessful){
-                        var programText: Program? = response.body()
-                        Log.d("http", "onResponse 성공: ${programText}")
+        val programRequest = ProgramRequest( deviceId = "", imgPath = "https://beyondb-bucket.s3.ap-northeast-2.amazonaws.com/capture/live.png",   captureTime = "2023-03-20T16:25:00" )
 
-                        var returnText : String = "프로그램 이름은 "+ programText?.programName + " 입니다."
+        service.getProgram(programRequest)?.enqueue(object : Callback<Program> {
+            override fun onResponse(call: Call<Program>, response: Response<Program>) {
+                if(response.isSuccessful){
+                    var programText: Program? = response.body()
+                    Log.d("http", "onResponse 성공: ${programText}")
 
-                        TTSrun(returnText)
-                        dashboardText.text = returnText
-                    }else{
-                        Log.d("http", "onResponse 실패")
-                    }
+                    var returnText : String = "프로그램 이름은 "+ programText?.programName + " 입니다."
+
+                    TTSrun(returnText)
+                    dashboardText.text = returnText
 
 
-                    dashboardBtn.isEnabled = true
-                    dashboardBtn.text = "PROGRAM"
-
+                }else{
+                    Log.d("http", "onResponse 실패")
                 }
-                override fun onFailure(call: Call<Program>, t: Throwable) {
-                    Log.d("http", "onFailure 에러: " + t.message.toString());
-                }
-            })
-        }
+
+
+                dashboardBtn.isEnabled = true
+                dashboardBtn.text = "PROGRAM"
+
+            }
+            override fun onFailure(call: Call<Program>, t: Throwable) {
+                Log.d("http", "onFailure 에러: " + t.message.toString());
+            }
+        })
+
+
+
+
+//        dashboardBtn.setOnClickListener {
+//            dashboardText.text = ""
+//            dashboardBtn.isEnabled = false
+//            dashboardBtn.text = "processing.."
+//
+//            val programRequest = ProgramRequest( deviceId = "", imgPath = "https://beyondb-bucket.s3.ap-northeast-2.amazonaws.com/capture/live.png",   captureTime = "2023-03-20T16:25:00" )
+//
+//            service.getProgram(programRequest)?.enqueue(object : Callback<Program> {
+//                override fun onResponse(call: Call<Program>, response: Response<Program>) {
+//                    if(response.isSuccessful){
+//                        var programText: Program? = response.body()
+//                        Log.d("http", "onResponse 성공: ${programText}")
+//
+//                        var returnText : String = "프로그램 이름은 "+ programText?.programName + " 입니다."
+//
+//                        TTSrun(returnText)
+//                        dashboardText.text = returnText
+//
+//
+//                    }else{
+//                        Log.d("http", "onResponse 실패")
+//                    }
+//
+//
+//                    dashboardBtn.isEnabled = true
+//                    dashboardBtn.text = "PROGRAM"
+//
+//                }
+//                override fun onFailure(call: Call<Program>, t: Throwable) {
+//                    Log.d("http", "onFailure 에러: " + t.message.toString());
+//                }
+//            })
+//        }
+
         return binding.root
     }
 
