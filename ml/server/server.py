@@ -53,6 +53,7 @@ def logodetect(img):
     results = logo_model(im)
     df = results.pandas().xyxy[0]  # result in pandas.DataFrame
 
+    # This code should be fixed
     for i in range(0, df.shape[0]):
         row = df.iloc[i]
         if row['confidence'] >= 0.9:
