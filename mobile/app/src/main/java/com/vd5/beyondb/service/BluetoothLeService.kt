@@ -14,7 +14,6 @@ import android.util.Log
 import com.bumptech.glide.Glide
 import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.util.Caption
-import com.vd5.beyondb.util.Cat
 import com.vd5.beyondb.util.ProgramDetail
 import com.vd5.beyondb.util.RetrofitService
 import retrofit2.Call

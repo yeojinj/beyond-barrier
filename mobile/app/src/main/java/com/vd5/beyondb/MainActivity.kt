@@ -73,10 +73,7 @@ class MainActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, NotificationsFragment()).commit()
                     return@OnItemSelectedListener true
                 }
-                R.id.navigation_settings -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, SettingsFragment()) .commit()
-                    return@OnItemSelectedListener true
-                }
+
             }
             false
         })
