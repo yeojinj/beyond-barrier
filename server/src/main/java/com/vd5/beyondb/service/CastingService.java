@@ -19,4 +19,9 @@ public class CastingService {
         return castingRepository.findByProgram(program);
     }
 
+    public void addCast(Program program, String cast_name) {
+        Casting casting = Casting.builder().program(program).cast_name(cast_name).build();
+        castingRepository.save(casting);
+    }
+
 }

@@ -5,6 +5,7 @@ import com.vd5.beyondb.model.dto.request.CaptureDto;
 import com.vd5.beyondb.model.dto.request.CaptureMlDto;
 import com.vd5.beyondb.model.dto.response.CaptionDto;
 import com.vd5.beyondb.model.dto.response.DetectDto;
+import com.vd5.beyondb.service.CastingService;
 import com.vd5.beyondb.service.ProgramService;
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +29,9 @@ public class ApiController {
 
     @Autowired
     private ProgramService programService;
+
+    @Autowired
+    private CastingService castingService;
 
     String mlBaseUrl = "http://70.12.130.121:5000/";      // ML server URL
     String crawlingBaseUrl = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=";        // Naver search URL
@@ -72,8 +76,8 @@ public class ApiController {
                     .timeout(5000).get();
                 Elements castElem = rawCastData.select("div.item div.title_box strong");
                 for (int i = 0; i < castElem.size(); i++) {
-                    String cast = castElem.get(i).text();
-//                log.info("[크롤링] 출연진 " + (i + 1) + " : " + cast);
+                    String castName = castElem.get(i).text();
+                    castingService.addCast(p, castName);
                 }
             } catch (IOException e) {
                 throw new RuntimeException(e);
