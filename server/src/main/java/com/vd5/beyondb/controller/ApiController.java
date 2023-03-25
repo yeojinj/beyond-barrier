@@ -70,8 +70,12 @@ public class ApiController {
             try {
                 Document rawData = Jsoup.connect(crawlingBaseUrl + programName).timeout(5000).get();
                 Elements descElem = rawData.select("div.detail_info span.desc._text");
-                String desc = descElem.get(0).text();
-                programService.updateContent(p.getId(), desc);
+                if (descElem.size() == 0) {
+                    log.info("프로그램 " + programName + "에 대한 정보가 없습니다.");
+                } else {
+                    String desc = descElem.get(0).text();
+                    programService.updateContent(p.getId(), desc);
+                }
                 Document rawCastData = Jsoup.connect(crawlingBaseUrl + programName + "+출연진")
                     .timeout(5000).get();
                 Elements castElem = rawCastData.select("div.item div.title_box strong");
