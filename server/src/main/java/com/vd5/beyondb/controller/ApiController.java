@@ -7,6 +7,7 @@ import com.vd5.beyondb.model.dto.response.CaptionDto;
 import com.vd5.beyondb.model.dto.response.DetectDto;
 import com.vd5.beyondb.service.ProgramService;
 import java.io.IOException;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -59,23 +60,26 @@ public class ApiController {
     @PostMapping(path = "/program/crawling")
     public String crawlingProgram() {
         log.info("===== crawlingProgram() =====");
-        Program program = programService.findById(590);
-        String programName = program.getName().replace(" ", "+");   // handle spacing
-        try {
-            Document rawData = Jsoup.connect(crawlingBaseUrl + programName).timeout(5000).get();
-            Elements descElem = rawData.select("div.detail_info span.desc._text");
-            String desc = descElem.get(0).text();
-            programService.updateContent(590, desc);
-            Document rawCastData = Jsoup.connect(crawlingBaseUrl + programName + "+출연진")
-                .timeout(5000).get();
-            Elements castElem = rawCastData.select("div.item div.title_box strong");
-            for (int i = 0; i < castElem.size(); i++) {
-                String cast = castElem.get(i).text();
+        List<Program> programList = programService.getProgramList();
+        for (Program p : programList) {
+            String programName = p.getName().replace(" ", "+");   // handle spacing
+            try {
+                Document rawData = Jsoup.connect(crawlingBaseUrl + programName).timeout(5000).get();
+                Elements descElem = rawData.select("div.detail_info span.desc._text");
+                String desc = descElem.get(0).text();
+                programService.updateContent(p.getId(), desc);
+                Document rawCastData = Jsoup.connect(crawlingBaseUrl + programName + "+출연진")
+                    .timeout(5000).get();
+                Elements castElem = rawCastData.select("div.item div.title_box strong");
+                for (int i = 0; i < castElem.size(); i++) {
+                    String cast = castElem.get(i).text();
 //                log.info("[크롤링] 출연진 " + (i + 1) + " : " + cast);
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
+
         return "크롤링 완료";
     }
 }
