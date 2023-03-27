@@ -20,7 +20,7 @@ public class ProgramService {
 
     public Program findById(int id) {
         programRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("DB에 존재하지 않는 프로그램 ID 입니다"));
+            .orElseThrow(() -> new RuntimeException("DB에 존재하지 않는 프로그램 ID(" + id + ") 입니다"));
         return programRepository.findById(id).get();
     }
 
