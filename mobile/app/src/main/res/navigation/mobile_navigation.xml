@@ -12,16 +12,16 @@
         tools:layout="@layout/fragment_home" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="com.vd5.beyondb.ui.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_program"
+        android:name="com.vd5.beyondb.ui.program.ProgramFragment"
+        android:label="@string/title_program"
+        tools:layout="@layout/fragment_program" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="com.vd5.beyondb.ui.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_captioning"
+        android:name="com.vd5.beyondb.ui.captioning.CaptioningFragment"
+        android:label="@string/title_captioning"
+        tools:layout="@layout/fragment_captioning" />
 
     <fragment
         android:id="@+id/navigation_settings"

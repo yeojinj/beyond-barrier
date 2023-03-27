@@ -4,19 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.dashboard.DashboardFragment">
-
-    <Button
-        android:id="@+id/button_dashboard"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Program"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout2"
-        app:layout_constraintVertical_bias="0.04000002" />
+    tools:context=".ui.program.ProgramFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout2"
@@ -40,7 +28,7 @@
             app:layout_constraintVertical_bias="0.31"/>
 
         <TextView
-            android:id="@+id/text_dashboard"
+            android:id="@+id/text_program"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textAlignment="center"
