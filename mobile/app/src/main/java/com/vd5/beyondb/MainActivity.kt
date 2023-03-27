@@ -19,16 +19,16 @@ import android.os.IBinder
 import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.util.Log
-import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.navigation.NavigationBarView
 import com.vd5.beyondb.databinding.ActivityMainBinding
 import com.vd5.beyondb.service.BluetoothLeService
-import com.vd5.beyondb.ui.dashboard.DashboardFragment
+import com.vd5.beyondb.ui.captioning.CaptioningFragment
 import com.vd5.beyondb.ui.home.HomeFragment
-import com.vd5.beyondb.ui.notifications.NotificationsFragment
+import com.vd5.beyondb.ui.program.ProgramFragment
 import com.vd5.beyondb.ui.settings.SettingsFragment
 import java.util.*
 
@@ -67,29 +67,31 @@ class MainActivity : AppCompatActivity() {
         navigationBarView.setOnItemSelectedListener(NavigationBarView.OnItemSelectedListener { item ->
             when (item.itemId) {
                 R.id.navigation_home -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, HomeFragment()).commit()
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, HomeFragment()).setTransition(
+                        FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit()
                     return@OnItemSelectedListener true
                 }
-                R.id.navigation_dashboard -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, DashboardFragment()).commit()
+                R.id.navigation_program -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, ProgramFragment()).setTransition(
+                        FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit()
                     return@OnItemSelectedListener true
                 }
-                R.id.navigation_notifications -> {
-                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, NotificationsFragment()).commit()
+                R.id.navigation_captioning -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, CaptioningFragment()).setTransition(
+                        FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit()
                     return@OnItemSelectedListener true
                 }
-
+                R.id.navigation_settings -> {
+                    supportFragmentManager.beginTransaction().replace(R.id.nav_host_fragment_activity_main, SettingsFragment()).setTransition(
+                        FragmentTransaction.TRANSIT_FRAGMENT_FADE).commit()
+                    return@OnItemSelectedListener true
+                }
             }
             false
         })
 
         // TTS 객체 생성
         TTSinit()
-
-
-
-
-
 
 
 
