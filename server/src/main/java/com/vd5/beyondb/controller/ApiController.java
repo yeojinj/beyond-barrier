@@ -1,9 +1,11 @@
 package com.vd5.beyondb.controller;
 
 import com.vd5.beyondb.model.Program;
+import com.vd5.beyondb.model.ProgramLog;
 import com.vd5.beyondb.model.dto.request.CaptureDto;
 import com.vd5.beyondb.model.dto.request.CaptureMlDto;
 import com.vd5.beyondb.model.dto.response.CaptionDto;
+import com.vd5.beyondb.model.dto.response.DetectDto;
 import com.vd5.beyondb.service.CaptionLogService;
 import com.vd5.beyondb.service.CastingService;
 import com.vd5.beyondb.service.ProgramLogService;
@@ -17,6 +19,8 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -63,6 +67,14 @@ public class ApiController {
             programId);       // get program name from DB by program id
         Long logId = programLogService.addProgramLog(program);
         return Long.toString(logId);
+    }
+
+    @GetMapping(path = "/program/{logid}")
+    public ResponseEntity<DetectDto> detectResult(@PathVariable("logid") String logId) {
+        ProgramLog programLog = programLogService.findProgramLogById(Long.parseLong(logId));
+        Program program = programLog.getProgram();
+        DetectDto detectDto = new DetectDto(program.getId(), program.getName());
+        return new ResponseEntity<>(detectDto, HttpStatus.OK);
     }
 
     @PostMapping(path = "/program/crawling")
