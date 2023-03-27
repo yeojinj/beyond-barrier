@@ -20,4 +20,10 @@ public class ProgramLogService {
         return programLog.getId();
     }
 
+    public ProgramLog findProgramLogById(Long id) {
+        programLogRepository.findProgramLogById(id)
+            .orElseThrow(() -> new RuntimeException("해당 로그가 없습니다."));
+        return programLogRepository.findProgramLogById(id).get();
+    }
+
 }
