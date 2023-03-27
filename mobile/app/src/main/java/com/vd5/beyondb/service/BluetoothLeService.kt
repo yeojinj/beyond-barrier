@@ -107,6 +107,7 @@ class BluetoothLeService: Service() {
                     pollingState = false
                     val charaUuid = characteristic.uuid.toString()
                     if (charaUuid == UUID_CAPTION_RESULT) {
+                        broadcastUpdate(ACTION_GATT_CAPTIONING, String(value))
                         // TODO 받은 갭셔닝 번호를 서버에 요청하기
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
                             .addConverterFactory(GsonConverterFactory.create()).build()

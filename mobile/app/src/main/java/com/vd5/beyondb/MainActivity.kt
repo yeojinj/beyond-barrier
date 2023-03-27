@@ -17,6 +17,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
+import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
 import android.widget.Toast
@@ -29,6 +30,7 @@ import com.vd5.beyondb.ui.dashboard.DashboardFragment
 import com.vd5.beyondb.ui.home.HomeFragment
 import com.vd5.beyondb.ui.notifications.NotificationsFragment
 import com.vd5.beyondb.ui.settings.SettingsFragment
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -81,7 +83,8 @@ class MainActivity : AppCompatActivity() {
             false
         })
 
-
+        // TTS 객체 생성
+        TTSinit()
 
 
 
@@ -210,6 +213,14 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "onReceive: $receivingData")
                     // TODO receivingData fragment로 전달
                 }
+                BluetoothLeService.ACTION_GATT_CAPTIONING -> {
+                    Log.d(TAG, "onReceive: MainActivity에서의 caption결과 수신")
+                    val receivingData = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
+                    TTSrun(receivingData!!)
+                }
+                BluetoothLeService.ACTION_GATT_PROGRAM -> {
+                    // TODO 프로그램 설명 결과 받아서 TTS로 읽어주기
+                }
             }
         }
     }
@@ -313,6 +324,8 @@ class MainActivity : AppCompatActivity() {
             addAction(BluetoothLeService.ACTION_GATT_DISCONNECTED)
             addAction(BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED)
             addAction(BluetoothLeService.ACTION_DATA_AVAILABLE)
+            addAction(BluetoothLeService.ACTION_GATT_CAPTIONING)
+            addAction(BluetoothLeService.ACTION_GATT_PROGRAM)
         }
     }
 
@@ -320,5 +333,28 @@ class MainActivity : AppCompatActivity() {
     fun bluetoothOn(){
         val enableBtIntent = Intent(ACTION_REQUEST_ENABLE)
         startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+    }
+
+    /**
+     * TTS 관련 메소드
+     */
+    var textToSpeech: TextToSpeech? = null
+
+    fun TTSrun(string: String) {
+        textToSpeech?.speak(string, TextToSpeech.QUEUE_FLUSH, null, null)
+        textToSpeech?.playSilentUtterance(750, TextToSpeech.QUEUE_ADD,null) // deley시간 설정
+    }
+
+    fun TTSinit() {
+        textToSpeech = TextToSpeech(this, TextToSpeech.OnInitListener {
+            if (it == TextToSpeech.SUCCESS) {
+                val result = textToSpeech!!.setLanguage(Locale.KOREAN)
+                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
+                    Log.e("TTS","해당언어는 지원되지 않습니다.")
+                    return@OnInitListener
+                }
+                textToSpeech!!.setSpeechRate(1.0f)
+            }
+        })
     }
 }
