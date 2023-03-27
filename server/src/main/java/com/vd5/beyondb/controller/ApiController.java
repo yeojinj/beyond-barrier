@@ -4,8 +4,9 @@ import com.vd5.beyondb.model.Program;
 import com.vd5.beyondb.model.dto.request.CaptureDto;
 import com.vd5.beyondb.model.dto.request.CaptureMlDto;
 import com.vd5.beyondb.model.dto.response.CaptionDto;
-import com.vd5.beyondb.model.dto.response.DetectDto;
+import com.vd5.beyondb.service.CaptionLogService;
 import com.vd5.beyondb.service.CastingService;
+import com.vd5.beyondb.service.ProgramLogService;
 import com.vd5.beyondb.service.ProgramService;
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +29,9 @@ import org.springframework.web.client.RestTemplate;
 public class ApiController {
 
     @Autowired
+    private ProgramLogService programLogService;
+
+    @Autowired
     private ProgramService programService;
 
     @Autowired
@@ -48,7 +52,7 @@ public class ApiController {
     }
 
     @PostMapping(path = "/program")
-    public ResponseEntity<DetectDto> detectLogo(@RequestBody CaptureDto captureDto) {
+    public String detectLogo(@RequestBody CaptureDto captureDto) {
         log.info("===== detectLogo() =====");
         CaptureMlDto captureMlDto = new CaptureMlDto(
             captureDto.getImgPath());  // request dto to ML server
@@ -57,8 +61,8 @@ public class ApiController {
             restTemplate.postForObject(mlBaseUrl + "s3/logodetect", captureMlDto, String.class));
         Program program = programService.findById(
             programId);       // get program name from DB by program id
-        DetectDto detectDto = new DetectDto(program.getId(), program.getName());
-        return new ResponseEntity<>(detectDto, HttpStatus.OK);
+        Long logId = programLogService.addProgramLog(program);
+        return Long.toString(logId);
     }
 
     @PostMapping(path = "/program/crawling")
