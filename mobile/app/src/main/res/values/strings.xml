@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">beyondb</string>
     <string name="title_home">메인화면</string>
-    <string name="title_dashboard">로고디텍팅</string>
-    <string name="title_notifications">캡셔닝</string>
+    <string name="title_program">프로그램 정보</string>
+    <string name="title_captioning">캡셔닝</string>
     <string name="title_settings">설정</string>
 
 </resources>

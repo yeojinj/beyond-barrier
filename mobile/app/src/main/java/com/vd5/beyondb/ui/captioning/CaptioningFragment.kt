@@ -1,4 +1,4 @@
-package com.vd5.beyondb.ui.notifications
+package com.vd5.beyondb.ui.captioning
 
 import android.os.Bundle
 import android.speech.tts.TextToSpeech
@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.vd5.beyondb.R
-import com.vd5.beyondb.databinding.FragmentNotificationsBinding
+import com.vd5.beyondb.databinding.FragmentCaptioningBinding
 import com.vd5.beyondb.util.Caption
 import com.vd5.beyondb.util.CaptionRequest
 import com.vd5.beyondb.util.ResultTransferPapago
@@ -20,9 +20,9 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Locale
 
-class NotificationsFragment : Fragment() {
+class CaptioningFragment : Fragment() {
 
-    lateinit var binding : FragmentNotificationsBinding
+    lateinit var binding : FragmentCaptioningBinding
     private var textToSpeech: TextToSpeech? = null
 
     private val retrofit = Retrofit.Builder().baseUrl("http://18.191.139.106:5000/api/")
@@ -65,7 +65,7 @@ class NotificationsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentNotificationsBinding.inflate(inflater,container,false)
+        binding = FragmentCaptioningBinding.inflate(inflater,container,false)
         TTSinit()
 
         val notificationsBtn = binding.buttonNotifications
