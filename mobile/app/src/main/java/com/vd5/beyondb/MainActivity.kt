@@ -12,12 +12,14 @@ import android.bluetooth.le.ScanResult
 import android.content.*
 import android.content.pm.PackageManager
 import android.nfc.NfcAdapter
+import android.nfc.NfcAdapter.EXTRA_DATA
 import android.os.Bundle
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import android.view.accessibility.AccessibilityNodeInfo
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.material.navigation.NavigationBarView
@@ -46,7 +48,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             // 블루투스를 지원하지 않는 경우
             Log.d("bluetoothAdapter","Device doesn't support Bluetooth")
-            // TODO : 블루투스를 지원하지 않는 기기는 사용이 불가하다는 UI 필요
+            Toast.makeText(this, "기기가 블루투스를 지원하지 않습니다.", Toast.LENGTH_LONG).show()
+            finish()
         }
 
         // TODO : 장치와 연결되어 있지 않고 실행할 때마다 호출 필요
@@ -103,9 +106,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     private val PERMISSIONS_BT = arrayOf(Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_ADVERTISE)
-    private val REQUEST_ENABLE_BT=1
+    private val REQUEST_ENABLE_BT = 1
     private val REQUEST_ALL_PERMISSION= 2
-    private val SCAN_PERIOD: Long = 10000 // BLE 스캔 시간
+    private val SCAN_PERIOD: Long = 20000 // BLE 최대 스캔 시간
     private val handler = Handler(Looper.getMainLooper())
 
     private val TAG = "MainActivityDebug" // 디버그용 tag
@@ -118,19 +121,18 @@ class MainActivity : AppCompatActivity() {
     private var scanning: Boolean = false
 
     fun scanLeDevice(enable: Boolean) {
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.BLUETOOTH_SCAN
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, PERMISSIONS_BT, REQUEST_ALL_PERMISSION)
             return
         }
         when (enable) {
             true -> {
                 handler.postDelayed({
-                    scanning = false
-                    bluetoothAdapter?.bluetoothLeScanner?.stopScan(leScanCallback)
+                    if(scanning) {
+                        Toast.makeText(this, "기기 검색에 실패하였습니다. 재시도 해주세요.", Toast.LENGTH_SHORT).show()
+                        scanning = false
+                        bluetoothAdapter?.bluetoothLeScanner?.stopScan(leScanCallback)
+                    }
                 }, SCAN_PERIOD)
                 scanning = true
                 bluetoothAdapter ?. bluetoothLeScanner ?. startScan (leScanCallback)
@@ -147,11 +149,7 @@ class MainActivity : AppCompatActivity() {
     private val leScanCallback = object: ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             super.onScanResult(callbackType, result)
-            if (ActivityCompat.checkSelfPermission(
-                    this@MainActivity,
-                    Manifest.permission.BLUETOOTH_CONNECT
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
+            if (ActivityCompat.checkSelfPermission(this@MainActivity, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this@MainActivity, PERMISSIONS_BT, REQUEST_ALL_PERMISSION)
                 return
             }
@@ -161,7 +159,6 @@ class MainActivity : AppCompatActivity() {
                 deviceAddress = result.device.address
                 val gattServiceIntent = Intent(this@MainActivity, BluetoothLeService::class.java)
                 bindService(gattServiceIntent, serviceConnection, Context.BIND_AUTO_CREATE)
-                // TODO : 장치를 찾았으므로 스캔 종료 필요 !!!
                 scanning = false
                 bluetoothAdapter?.bluetoothLeScanner?.stopScan(this)
             }
@@ -201,16 +198,15 @@ class MainActivity : AppCompatActivity() {
                     connectionState = STATE_DISCONNECTED
                     Log.d(TAG, "onReceive: 연결 안됨 방송")
                     Log.d(TAG, "onReceive: 연결 재시도")
-                    scanLeDevice(true)
+                    bluetoothService?.connect(deviceAddress!!)
                 }
                 BluetoothLeService.ACTION_GATT_SERVICES_DISCOVERED -> {
                     Log.d(TAG, "onReceive: 서비스 발견 방송")
-                    Log.d(TAG, "onReceive: " + bluetoothService?.getSupportedGattServices())
                     accessGattServices(bluetoothService?.getSupportedGattServices())
                 }
                 BluetoothLeService.ACTION_DATA_AVAILABLE -> {
                     Log.d(TAG, "onReceive: READ or NOTIFY")
-                    val receivingData = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
+                    val receivingData = intent.getStringExtra(EXTRA_DATA)
                     Log.d(TAG, "onReceive: $receivingData")
                     // TODO receivingData fragment로 전달
                 }
@@ -286,7 +282,15 @@ class MainActivity : AppCompatActivity() {
      * program fragment 에서 호출
      */
     fun programRequest() {
-
+        // 일단 read 요청 한 번 보내기
+        // result read 나올 때까지 계속 읽기
+        if (programRequestCharacteristic == null) return
+        bluetoothService?.readCharacteristic(programRequestCharacteristic!!)
+        if (programResultCharacteristic == null) return
+        Log.d(TAG, "captioningRequest: polling 시작")
+        Handler(Looper.getMainLooper()).postDelayed({
+            bluetoothService?.resultPolling(programResultCharacteristic!!)
+        }, 500)
     }
 
     override fun onResume() {

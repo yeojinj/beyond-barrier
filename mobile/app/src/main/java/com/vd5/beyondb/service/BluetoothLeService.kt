@@ -7,12 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.nfc.NfcAdapter.EXTRA_DATA
 import android.os.Binder
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
 import android.util.Log
-import com.bumptech.glide.Glide
-import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.util.Caption
 import com.vd5.beyondb.util.ProgramDetail
 import com.vd5.beyondb.util.RetrofitService
@@ -109,17 +105,17 @@ class BluetoothLeService: Service() {
             if (String(value) != requestDefault) {
                 if (String(value) != resultDefault) {
                     pollingState = false
-                    var charaUuid = characteristic.uuid.toString()
+                    val charaUuid = characteristic.uuid.toString()
                     if (charaUuid == UUID_CAPTION_RESULT) {
                         // TODO 받은 갭셔닝 번호를 서버에 요청하기
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
-                            .addConverterFactory(GsonConverterFactory.create()).build();
-                        val service = retrofit.create(RetrofitService::class.java);
-                        val captionNum = String(characteristic.value)
-                        service.getCaption(captionNum)?.enqueue(object : Callback<Caption> {
+                            .addConverterFactory(GsonConverterFactory.create()).build()
+                        val service = retrofit.create(RetrofitService::class.java)
+                        val captionNum = String(value)
+                        service.getCaption(captionNum).enqueue(object : Callback<Caption> {
                             override fun onResponse(call: Call<Caption>, response: Response<Caption>) {
                                 if(response.isSuccessful){
-                                    var result: Caption? = response.body()
+                                    val result: Caption? = response.body()
                                     Log.d(TAG, "onResponse 성공: " + result?.result)
                                     broadcastUpdate(ACTION_GATT_CAPTIONING, result?.result!!)
                                 }else{
@@ -128,7 +124,7 @@ class BluetoothLeService: Service() {
                             }
 
                             override fun onFailure(call: Call<Caption>, t: Throwable) {
-                                Log.d(TAG, "onFailure 에러: " + t.message.toString());
+                                Log.d(TAG, "onFailure 에러: " + t.message.toString())
                             }
                         })
 
@@ -136,13 +132,13 @@ class BluetoothLeService: Service() {
                         broadcastUpdate(ACTION_GATT_PROGRAM, characteristic)
                         // TODO 받은 프로그램 번호를 서버에 요청하기
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
-                            .addConverterFactory(GsonConverterFactory.create()).build();
-                        val service = retrofit.create(RetrofitService::class.java);
-                        val programNum = String(characteristic.value)
-                        service.getProgram(programNum)?.enqueue(object : Callback<ProgramDetail> {
+                            .addConverterFactory(GsonConverterFactory.create()).build()
+                        val service = retrofit.create(RetrofitService::class.java)
+                        val programNum = String(value)
+                        service.getProgram(programNum).enqueue(object : Callback<ProgramDetail> {
                             override fun onResponse(call: Call<ProgramDetail>, response: Response<ProgramDetail>) {
                                 if(response.isSuccessful){
-                                    var result: ProgramDetail? = response.body()
+                                    val result: ProgramDetail? = response.body()
                                     Log.d(TAG, "onResponse 성공: ${result?.programId}")
 //                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result)
                                 }else{
@@ -151,7 +147,7 @@ class BluetoothLeService: Service() {
                             }
 
                             override fun onFailure(call: Call<ProgramDetail>, t: Throwable) {
-                                Log.d(TAG, "onFailure 에러: " + t.message.toString());
+                                Log.d(TAG, "onFailure 에러: " + t.message.toString())
                             }
                         })
                     }
@@ -234,7 +230,7 @@ class BluetoothLeService: Service() {
         pollingState = true
         if (bluetoothGatt == null) return
         //타이머 객체 선언
-        var t_timer = Timer()
+        val t_timer = Timer()
         // 반복 횟수
         var count = 0
         //타이머 동작 시간 지정 및 작업 내용 지정
@@ -245,7 +241,7 @@ class BluetoothLeService: Service() {
                 count++
                 //카운트 값이 15초가되면 타이머 종료
                 if(count > 60) {
-                    var charaUuid = gattCharacteristic.uuid.toString()
+                    val charaUuid = gattCharacteristic.uuid.toString()
                     if (charaUuid == UUID_CAPTION_RESULT) broadcastUpdate(ACTION_GATT_CAPTIONING, "요청에 실패하였습니다. 재요청 해주세요.")
                     if (charaUuid == UUID_PROGRAM_RESULT) broadcastUpdate(ACTION_GATT_PROGRAM, "요청에 실패하였습니다. 재요청 해주세요.")
                     println("[polling 요청 초과]")
@@ -253,14 +249,14 @@ class BluetoothLeService: Service() {
                 } else if (!pollingState){
                     println("[polling 종료]")
                     t_timer.cancel()
-                } else bluetoothGatt?.readCharacteristic(gattCharacteristic)
+                } else {
+                    bluetoothGatt?.readCharacteristic(gattCharacteristic)
+                    Log.d(TAG, "run: ${gattCharacteristic.uuid.toString()}")
+                    Log.d(TAG, "run: read 요청!!!")
+                }
             }
         },0, 250) // 바로 실행, 1초에 4회 요청
         println("[polling 시작]")
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun polling(gattCharacteristic: BluetoothGattCharacteristic) {
     }
 
     companion object {
