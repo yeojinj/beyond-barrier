@@ -39,6 +39,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val sa = SplashActivity()
+        sa.testLogging()
+
         // Bluetooth 관련 코드
         // 권한 요청하기
         ActivityCompat.requestPermissions(this, PERMISSIONS_BT, REQUEST_ALL_PERMISSION)
