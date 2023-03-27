@@ -10,9 +10,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnClickListener
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat.registerReceiver
 import androidx.fragment.app.Fragment
 import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.databinding.FragmentHomeBinding
@@ -99,5 +97,12 @@ class HomeFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        var textToSpeech = (activity as MainActivity).textToSpeech
+        if(textToSpeech != null){
+            textToSpeech?.stop()
+        }
+    }
 
 }
