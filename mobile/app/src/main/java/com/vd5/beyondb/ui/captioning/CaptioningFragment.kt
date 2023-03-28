@@ -1,5 +1,6 @@
 package com.vd5.beyondb.ui.captioning
 
+import android.bluetooth.BluetoothAdapter
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -55,7 +56,12 @@ class CaptioningFragment : Fragment() {
         notificationsBtn?.isEnabled = false
         notificationsBtn?.text = "processing.."
 
-        (activity as MainActivity).captioningRequest()
+
+        if ((activity as MainActivity).connectionState == BluetoothAdapter.STATE_DISCONNECTED){
+            (activity as MainActivity).scanLeDevice(true)
+        } else {
+            (activity as MainActivity).captioningRequest()
+        }
 
         return binding.root
     }

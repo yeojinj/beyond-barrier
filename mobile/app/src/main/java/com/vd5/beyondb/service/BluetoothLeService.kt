@@ -108,7 +108,6 @@ class BluetoothLeService: Service() {
                     val charaUuid = characteristic.uuid.toString()
                     if (charaUuid == UUID_CAPTION_RESULT) {
                         Log.d(TAG, "onCharacteristicRead: 캡션 결과 http 요청")
-                        // TODO 받은 갭셔닝 번호를 서버에 요청하기
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
                             .addConverterFactory(GsonConverterFactory.create()).build()
                         val service = retrofit.create(RetrofitService::class.java)
@@ -130,7 +129,6 @@ class BluetoothLeService: Service() {
                         })
 
                     } else if (charaUuid == UUID_PROGRAM_RESULT) {
-                        broadcastUpdate(ACTION_GATT_PROGRAM, characteristic)
                         // TODO 받은 프로그램 번호를 서버에 요청하기
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
                             .addConverterFactory(GsonConverterFactory.create()).build()
@@ -191,7 +189,7 @@ class BluetoothLeService: Service() {
 
     private fun broadcastUpdate(action: String, program: Program) {
         val intent = Intent(action)
-        intent.putExtra("program", program)
+        intent.putExtra("program", program as java.io.Serializable)
         sendBroadcast(intent)
     }
 
