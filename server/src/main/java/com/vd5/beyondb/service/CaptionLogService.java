@@ -19,4 +19,10 @@ public class CaptionLogService {
         return captionLog.getId();
     }
 
+    public CaptionLog findCaptionLogById(Long id) {
+        CaptionLog captionLog = captionLogRepository.findCaptionLogById(id)
+            .orElseThrow(() -> new RuntimeException("해당 로그가 없습니다."));
+        return captionLog;
+    }
+
 }

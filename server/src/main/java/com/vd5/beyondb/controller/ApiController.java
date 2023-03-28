@@ -1,9 +1,11 @@
 package com.vd5.beyondb.controller;
 
+import com.vd5.beyondb.model.CaptionLog;
 import com.vd5.beyondb.model.Program;
 import com.vd5.beyondb.model.ProgramLog;
 import com.vd5.beyondb.model.dto.request.CaptureDto;
 import com.vd5.beyondb.model.dto.request.CaptureMlDto;
+import com.vd5.beyondb.model.dto.response.CaptionDto;
 import com.vd5.beyondb.model.dto.response.DetectDto;
 import com.vd5.beyondb.service.CaptionLogService;
 import com.vd5.beyondb.service.CastingService;
@@ -58,6 +60,13 @@ public class ApiController {
         return Long.toString(logId);
     }
 
+    @GetMapping(path = "/caption/{logId}")
+    public ResponseEntity<CaptionDto> captionResult(@PathVariable("logId") String logId){
+        CaptionLog captionLog = captionLogService.findCaptionLogById(Long.parseLong(logId));
+        CaptionDto captionDto = new CaptionDto(captionLog.getContent());
+        return new ResponseEntity<>(captionDto, HttpStatus.OK);
+    }
+
     @PostMapping(path = "/program")
     public String detectLogo(@RequestBody CaptureDto captureDto) {
         log.info("===== detectLogo() =====");
@@ -71,8 +80,8 @@ public class ApiController {
         return Long.toString(logId);
     }
 
-    @GetMapping(path = "/program/{logid}")
-    public ResponseEntity<DetectDto> detectResult(@PathVariable("logid") String logId) {
+    @GetMapping(path = "/program/{logId}")
+    public ResponseEntity<DetectDto> detectResult(@PathVariable("logId") String logId) {
         ProgramLog programLog = programLogService.findProgramLogById(Long.parseLong(logId));
         Program program = programLog.getProgram();
         DetectDto detectDto = new DetectDto(program.getId(), program.getName());
