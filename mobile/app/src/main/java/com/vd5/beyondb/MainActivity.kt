@@ -219,17 +219,6 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, "onReceive: $receivingData")
                     // TODO receivingData fragment로 전달
                 }
-                BluetoothLeService.ACTION_GATT_CAPTIONING -> {
-                    Log.d(TAG, "onReceive: MainActivity에서의 caption결과 수신")
-                    val receivingData = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
-                    TTSrun(receivingData!!)
-                }
-                BluetoothLeService.ACTION_GATT_PROGRAM -> {
-                    // TODO 프로그램 설명 결과 받아서 TTS로 읽어주기
-                    val program = intent.getSerializableExtra("program", Program::class.java)
-                    var programDetail = "현재 시청 중인 프로그램은 ${program?.programName}입니다."
-                    TTSrun(programDetail)
-                }
             }
         }
     }

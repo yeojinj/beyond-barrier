@@ -117,10 +117,8 @@ class BluetoothLeService: Service() {
                             override fun onResponse(call: Call<Caption>, response: Response<Caption>) {
                                 if(response.isSuccessful){
                                     val result: Caption? = response.body()
-                                    // TODO 번역하기 해서 result 필드 변경
-                                    // TODO 번역 과정에서 settings 설정 가져오기
                                     Log.d(TAG, "onResponse 성공: " + result?.result)
-                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result?.result!!)
+                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result!!)
                                 }else{
                                     Log.d(TAG, "onResponse 실패")
                                 }
@@ -194,6 +192,12 @@ class BluetoothLeService: Service() {
     private fun broadcastUpdate(action: String, program: Program) {
         val intent = Intent(action)
         intent.putExtra("program", program)
+        sendBroadcast(intent)
+    }
+
+    private fun broadcastUpdate(action: String, caption: Caption) {
+        val intent = Intent(action)
+        intent.putExtra("caption", caption as java.io.Serializable)
         sendBroadcast(intent)
     }
 
