@@ -1,13 +1,10 @@
 package com.vd5.beyondb.controller;
 
-import com.vd5.beyondb.model.CaptionLog;
 import com.vd5.beyondb.model.Program;
 import com.vd5.beyondb.model.ProgramLog;
 import com.vd5.beyondb.model.dto.request.CaptureDto;
 import com.vd5.beyondb.model.dto.request.CaptureMlDto;
-import com.vd5.beyondb.model.dto.response.CaptionDto;
 import com.vd5.beyondb.model.dto.response.DetectDto;
-import com.vd5.beyondb.service.CaptionLogService;
 import com.vd5.beyondb.service.CastingService;
 import com.vd5.beyondb.service.ProgramLogService;
 import com.vd5.beyondb.service.ProgramService;
@@ -30,11 +27,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @RestController
-@RequestMapping("api")
-public class ApiController {
-
-    @Autowired
-    private CaptionLogService captionLogService;
+@RequestMapping("api/program")
+public class ProgramController {
 
     @Autowired
     private ProgramLogService programLogService;
@@ -48,26 +42,7 @@ public class ApiController {
     String mlBaseUrl = "http://70.12.130.121:5000/";      // ML server URL
     String crawlingBaseUrl = "https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=";        // Naver search URL
 
-    @PostMapping(path = "/caption")
-    public String captionImage(@RequestBody CaptureDto captureDto) {
-        log.info("===== captionImage() =====");
-        CaptureMlDto captureMlDto = new CaptureMlDto(
-            captureDto.getImgPath());  // request dto to ML server
-        RestTemplate restTemplate = new RestTemplate();
-        String result = restTemplate.postForObject(mlBaseUrl + "s3/imagecaption", captureMlDto,
-            String.class);
-        Long logId = captionLogService.addCaptionLog(result);
-        return Long.toString(logId);
-    }
-
-    @GetMapping(path = "/caption/{logId}")
-    public ResponseEntity<CaptionDto> captionResult(@PathVariable("logId") String logId){
-        CaptionLog captionLog = captionLogService.findCaptionLogById(Long.parseLong(logId));
-        CaptionDto captionDto = new CaptionDto(captionLog.getContent());
-        return new ResponseEntity<>(captionDto, HttpStatus.OK);
-    }
-
-    @PostMapping(path = "/program")
+    @PostMapping(path = "")
     public String detectLogo(@RequestBody CaptureDto captureDto) {
         log.info("===== detectLogo() =====");
         CaptureMlDto captureMlDto = new CaptureMlDto(
@@ -80,7 +55,7 @@ public class ApiController {
         return Long.toString(logId);
     }
 
-    @GetMapping(path = "/program/{logId}")
+    @GetMapping(path = "/{logId}")
     public ResponseEntity<DetectDto> detectResult(@PathVariable("logId") String logId) {
         ProgramLog programLog = programLogService.findProgramLogById(Long.parseLong(logId));
         Program program = programLog.getProgram();
@@ -88,7 +63,7 @@ public class ApiController {
         return new ResponseEntity<>(detectDto, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/program/crawling")
+    @PostMapping(path = "/crawling")
     public String crawlingProgram() {
         log.info("===== crawlingProgram() =====");
         List<Program> programList = programService.getProgramList();
