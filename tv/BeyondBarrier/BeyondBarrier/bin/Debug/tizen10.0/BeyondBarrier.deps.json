@@ -9,13 +9,53 @@
     "Tizen,Version=v10.0/": {
       "BeyondBarrier/1.0.0": {
         "dependencies": {
+          "AWSSDK.S3": "3.7.103.35",
           "Tizen.NET": "10.0.0.17508"
         },
         "runtime": {
           "BeyondBarrier.dll": {}
         }
       },
+      "AWSSDK.Core/3.7.106.5": {
+        "dependencies": {
+          "Microsoft.Bcl.AsyncInterfaces": "1.1.0"
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.106.5"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.103.35": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.106.5"
+        },
+        "runtime": {
+          "lib/netstandard2.0/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.103.35"
+          }
+        }
+      },
+      "Microsoft.Bcl.AsyncInterfaces/1.1.0": {
+        "dependencies": {
+          "System.Threading.Tasks.Extensions": "4.5.2"
+        },
+        "runtime": {
+          "lib/netstandard2.1/Microsoft.Bcl.AsyncInterfaces.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "4.700.19.56404"
+          }
+        }
+      },
       "Microsoft.NETCore.Platforms/3.1.0": {},
+      "System.Runtime.CompilerServices.Unsafe/4.5.2": {},
+      "System.Threading.Tasks.Extensions/4.5.2": {
+        "dependencies": {
+          "System.Runtime.CompilerServices.Unsafe": "4.5.2"
+        }
+      },
       "Tizen.NET/10.0.0.17508": {
         "dependencies": {
           "Microsoft.NETCore.Platforms": "3.1.0",
@@ -31,12 +71,47 @@
       "serviceable": false,
       "sha512": ""
     },
+    "AWSSDK.Core/3.7.106.5": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-Ko+ZIM9HVtisWy6v+sNDmTGfSsMgQT2KxtYHLa3ztpEiN7ta9BiuBmgiNAc1BPSu3xMs4NsBBdt+qMrMKfUB/A==",
+      "path": "awssdk.core/3.7.106.5",
+      "hashPath": "awssdk.core.3.7.106.5.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.7.103.35": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-zQMIHW6BCt+3wt0WkuuL1TUotvaDUTB7ykZ42sYJDKg2O8NeNn5pCibA4np9Kp1WBsulTGKZBU+dSMF1mvd69A==",
+      "path": "awssdk.s3/3.7.103.35",
+      "hashPath": "awssdk.s3.3.7.103.35.nupkg.sha512"
+    },
+    "Microsoft.Bcl.AsyncInterfaces/1.1.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-1Am6l4Vpn3/K32daEqZI+FFr96OlZkgwK2LcT3pZ2zWubR5zTPW3/FkO1Rat9kb7oQOa4rxgl9LJHc5tspCWfg==",
+      "path": "microsoft.bcl.asyncinterfaces/1.1.0",
+      "hashPath": "microsoft.bcl.asyncinterfaces.1.1.0.nupkg.sha512"
+    },
     "Microsoft.NETCore.Platforms/3.1.0": {
       "type": "package",
       "serviceable": true,
       "sha512": "sha512-z7aeg8oHln2CuNulfhiLYxCVMPEwBl3rzicjvIX+4sUuCwvXw5oXQEtbiU2c0z4qYL5L3Kmx0mMA/+t/SbY67w==",
       "path": "microsoft.netcore.platforms/3.1.0",
       "hashPath": "microsoft.netcore.platforms.3.1.0.nupkg.sha512"
+    },
+    "System.Runtime.CompilerServices.Unsafe/4.5.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-wprSFgext8cwqymChhrBLu62LMg/1u92bU+VOwyfBimSPVFXtsNqEWC92Pf9ofzJFlk4IHmJA75EDJn1b2goAQ==",
+      "path": "system.runtime.compilerservices.unsafe/4.5.2",
+      "hashPath": "system.runtime.compilerservices.unsafe.4.5.2.nupkg.sha512"
+    },
+    "System.Threading.Tasks.Extensions/4.5.2": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-BG/TNxDFv0svAzx8OiMXDlsHfGw623BZ8tCXw4YLhDFDvDhNUEV58jKYMGRnkbJNm7c3JNNJDiN7JBMzxRBR2w==",
+      "path": "system.threading.tasks.extensions/4.5.2",
+      "hashPath": "system.threading.tasks.extensions.4.5.2.nupkg.sha512"
     },
     "Tizen.NET/10.0.0.17508": {
       "type": "package",

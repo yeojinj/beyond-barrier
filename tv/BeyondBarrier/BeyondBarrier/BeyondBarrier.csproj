@@ -15,7 +15,11 @@
 
   <ItemGroup>
     <Folder Include="lib\" />
-    <Folder Include="res\" />
+    <Folder Include="shared\res\savedPics\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AWSSDK.S3" Version="3.7.103.35" />
   </ItemGroup>
 
 </Project>

@@ -45,6 +45,10 @@
         "tizen10.0": {
           "targetAlias": "tizen10.0",
           "dependencies": {
+            "AWSSDK.S3": {
+              "target": "Package",
+              "version": "[3.7.103.35, )"
+            },
             "Tizen.NET": {
               "include": "Compile, Build, Native, ContentFiles, Analyzers, BuildTransitive",
               "suppressParent": "All",

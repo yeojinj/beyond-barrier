@@ -17,4 +17,8 @@
     <Import Project="$(NuGetPackageRoot)tizen.net.api10\10.0.0.17508\build\tizen10.0\Tizen.NET.API10.props" Condition="Exists('$(NuGetPackageRoot)tizen.net.api10\10.0.0.17508\build\tizen10.0\Tizen.NET.API10.props')" />
     <Import Project="$(NuGetPackageRoot)tizen.net\10.0.0.17508\build\tizen40\Tizen.NET.props" Condition="Exists('$(NuGetPackageRoot)tizen.net\10.0.0.17508\build\tizen40\Tizen.NET.props')" />
   </ImportGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <PkgAWSSDK_Core Condition=" '$(PkgAWSSDK_Core)' == '' ">C:\Users\Jinuk\.nuget\packages\awssdk.core\3.7.106.5</PkgAWSSDK_Core>
+    <PkgAWSSDK_S3 Condition=" '$(PkgAWSSDK_S3)' == '' ">C:\Users\Jinuk\.nuget\packages\awssdk.s3\3.7.103.35</PkgAWSSDK_S3>
+  </PropertyGroup>
 </Project>
