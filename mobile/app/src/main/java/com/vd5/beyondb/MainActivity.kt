@@ -30,6 +30,7 @@ import com.vd5.beyondb.ui.captioning.CaptioningFragment
 import com.vd5.beyondb.ui.home.HomeFragment
 import com.vd5.beyondb.ui.program.ProgramFragment
 import com.vd5.beyondb.ui.settings.SettingsFragment
+import com.vd5.beyondb.util.Program
 import java.util.*
 
 
@@ -225,6 +226,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 BluetoothLeService.ACTION_GATT_PROGRAM -> {
                     // TODO 프로그램 설명 결과 받아서 TTS로 읽어주기
+                    val program = intent.getSerializableExtra("program", Program::class.java)
+                    var programDetail = "현재 시청 중인 프로그램은 ${program?.programName}입니다."
+                    TTSrun(programDetail)
                 }
             }
         }

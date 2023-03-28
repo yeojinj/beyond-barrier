@@ -10,7 +10,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import com.vd5.beyondb.util.Caption
-import com.vd5.beyondb.util.ProgramDetail
+import com.vd5.beyondb.util.Program
 import com.vd5.beyondb.util.RetrofitService
 import retrofit2.Call
 import retrofit2.Callback
@@ -107,7 +107,7 @@ class BluetoothLeService: Service() {
                     pollingState = false
                     val charaUuid = characteristic.uuid.toString()
                     if (charaUuid == UUID_CAPTION_RESULT) {
-                        broadcastUpdate(ACTION_GATT_CAPTIONING, String(value))
+                        Log.d(TAG, "onCharacteristicRead: 캡션 결과 http 요청")
                         // TODO 받은 갭셔닝 번호를 서버에 요청하기
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
                             .addConverterFactory(GsonConverterFactory.create()).build()
@@ -117,6 +117,8 @@ class BluetoothLeService: Service() {
                             override fun onResponse(call: Call<Caption>, response: Response<Caption>) {
                                 if(response.isSuccessful){
                                     val result: Caption? = response.body()
+                                    // TODO 번역하기 해서 result 필드 변경
+                                    // TODO 번역 과정에서 settings 설정 가져오기
                                     Log.d(TAG, "onResponse 성공: " + result?.result)
                                     broadcastUpdate(ACTION_GATT_CAPTIONING, result?.result!!)
                                 }else{
@@ -136,18 +138,18 @@ class BluetoothLeService: Service() {
                             .addConverterFactory(GsonConverterFactory.create()).build()
                         val service = retrofit.create(RetrofitService::class.java)
                         val programNum = String(value)
-                        service.getProgram(programNum).enqueue(object : Callback<ProgramDetail> {
-                            override fun onResponse(call: Call<ProgramDetail>, response: Response<ProgramDetail>) {
+                        service.getProgram(programNum).enqueue(object : Callback<Program> {
+                            override fun onResponse(call: Call<Program>, response: Response<Program>) {
                                 if(response.isSuccessful){
-                                    val result: ProgramDetail? = response.body()
+                                    val result: Program? = response.body()
                                     Log.d(TAG, "onResponse 성공: ${result?.programId}")
-//                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result)
+                                    broadcastUpdate(ACTION_GATT_PROGRAM, result!!)
                                 }else{
                                     Log.d(TAG, "onResponse 실패")
                                 }
                             }
 
-                            override fun onFailure(call: Call<ProgramDetail>, t: Throwable) {
+                            override fun onFailure(call: Call<Program>, t: Throwable) {
                                 Log.d(TAG, "onFailure 에러: " + t.message.toString())
                             }
                         })
@@ -186,6 +188,12 @@ class BluetoothLeService: Service() {
             val stringData = String(data)
             intent.putExtra(EXTRA_DATA, stringData)
         }
+        sendBroadcast(intent)
+    }
+
+    private fun broadcastUpdate(action: String, program: Program) {
+        val intent = Intent(action)
+        intent.putExtra("program", program)
         sendBroadcast(intent)
     }
 
