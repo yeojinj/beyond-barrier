@@ -16,7 +16,6 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import com.vd5.beyondb.MainActivity
-import com.vd5.beyondb.R
 import com.vd5.beyondb.databinding.FragmentCaptioningBinding
 import com.vd5.beyondb.service.BluetoothLeService
 import com.vd5.beyondb.util.*
