@@ -71,13 +71,12 @@ class CaptioningFragment : Fragment() {
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
 
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun onReceive(context: Context, intent: Intent) {
             Log.d(TAG, "onReceive: " + intent.action)
             when (intent.action) {
                 BluetoothLeService.ACTION_GATT_CAPTIONING -> {
                     Log.d(TAG, "onReceive: captionFragment에서의 caption결과 수신")
-                    val caption = intent.getSerializableExtra("caption", Caption::class.java)
+                    val caption = intent.getSerializableExtra("caption") as Caption
                     Log.d(TAG, "onReceive: $caption")
                     var captionResult = caption?.result!!
                     papagoService.transferPapago(CLIENT_ID,CLIENT_SECRET,"en","ko",captionResult)

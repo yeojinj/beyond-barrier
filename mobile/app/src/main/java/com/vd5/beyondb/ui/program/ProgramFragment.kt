@@ -58,13 +58,12 @@ class ProgramFragment : Fragment() {
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
 
-        @RequiresApi(Build.VERSION_CODES.TIRAMISU)
         override fun onReceive(context: Context, intent: Intent) {
             Log.d(TAG, "onReceive: " + intent.action)
             when (intent.action) {
                 BluetoothLeService.ACTION_GATT_PROGRAM -> {
                     Log.d(TAG, "onReceive: 프로그램 결과 수신")
-                    val program = intent.getSerializableExtra("program", Program::class.java)
+                    val program = intent.getSerializableExtra("program") as Program
                     Log.d(TAG, "program 결과 : $program")
                     val programName = "프로그램 이름은 ${program?.programName}입니다."
                     programText?.text = programName
