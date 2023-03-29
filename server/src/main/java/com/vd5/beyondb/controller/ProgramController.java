@@ -53,9 +53,13 @@ public class ProgramController {
         RestTemplate restTemplate = new RestTemplate();
         int programId = Integer.parseInt(
             restTemplate.postForObject(mlBaseUrl + "s3/logodetect", captureMlDto, String.class));
-        Program program = programService.findById(programId);
-        Long logId = programLogService.addProgramLog(program);
-        return Long.toString(logId);
+        if (programId == -1) {
+            return "-2";
+        } else {
+            Program program = programService.findById(programId);
+            Long logId = programLogService.addProgramLog(program);
+            return Long.toString(logId);
+        }
     }
 
     @GetMapping(path = "/{logId}")
