@@ -39,5 +39,5 @@ interface RetrofitService {
     @GET("program/{id}")
     fun getProgram(
         @Path("id") programNum: String
-    ) : Call<ProgramDetail>
+    ) : Call<Program>
 }
