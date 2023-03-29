@@ -19,6 +19,7 @@ import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,7 +72,7 @@ public class ProgramController {
         return new ResponseEntity<>(detectDto, HttpStatus.OK);
     }
 
-    @PostMapping(path = "/crawling")
+    @Scheduled(cron = "0 25 11 29 * ?", zone = "Asia/Seoul")     // 한국 시간으로 매달 29일 11시 25분마다 크롤링
     public String crawlingProgram() {
         log.info("===== crawlingProgram() =====");
         List<Program> programList = programService.getProgramList();
