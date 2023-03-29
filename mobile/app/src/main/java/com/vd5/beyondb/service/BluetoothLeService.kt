@@ -10,7 +10,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.util.Log
 import com.vd5.beyondb.util.Caption
-import com.vd5.beyondb.util.ProgramDetail
+import com.vd5.beyondb.util.Program
 import com.vd5.beyondb.util.RetrofitService
 import retrofit2.Call
 import retrofit2.Callback
@@ -106,9 +106,9 @@ class BluetoothLeService: Service() {
                 if (String(value) != resultDefault) {
                     pollingState = false
                     val charaUuid = characteristic.uuid.toString()
+                    Log.d(TAG, "onCharacteristicRead: $charaUuid")
                     if (charaUuid == UUID_CAPTION_RESULT) {
-                        broadcastUpdate(ACTION_GATT_CAPTIONING, String(value))
-                        // TODO 받은 갭셔닝 번호를 서버에 요청하기
+                        Log.d(TAG, "onCharacteristicRead: 캡션 결과 http 요청")
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
                             .addConverterFactory(GsonConverterFactory.create()).build()
                         val service = retrofit.create(RetrofitService::class.java)
@@ -118,7 +118,7 @@ class BluetoothLeService: Service() {
                                 if(response.isSuccessful){
                                     val result: Caption? = response.body()
                                     Log.d(TAG, "onResponse 성공: " + result?.result)
-                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result?.result!!)
+                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result!!)
                                 }else{
                                     Log.d(TAG, "onResponse 실패")
                                 }
@@ -130,24 +130,23 @@ class BluetoothLeService: Service() {
                         })
 
                     } else if (charaUuid == UUID_PROGRAM_RESULT) {
-                        broadcastUpdate(ACTION_GATT_PROGRAM, characteristic)
                         // TODO 받은 프로그램 번호를 서버에 요청하기
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
                             .addConverterFactory(GsonConverterFactory.create()).build()
                         val service = retrofit.create(RetrofitService::class.java)
                         val programNum = String(value)
-                        service.getProgram(programNum).enqueue(object : Callback<ProgramDetail> {
-                            override fun onResponse(call: Call<ProgramDetail>, response: Response<ProgramDetail>) {
+                        service.getProgram(programNum).enqueue(object : Callback<Program> {
+                            override fun onResponse(call: Call<Program>, response: Response<Program>) {
                                 if(response.isSuccessful){
-                                    val result: ProgramDetail? = response.body()
+                                    val result: Program? = response.body()
                                     Log.d(TAG, "onResponse 성공: ${result?.programId}")
-//                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result)
+                                    broadcastUpdate(ACTION_GATT_PROGRAM, result!!)
                                 }else{
                                     Log.d(TAG, "onResponse 실패")
                                 }
                             }
 
-                            override fun onFailure(call: Call<ProgramDetail>, t: Throwable) {
+                            override fun onFailure(call: Call<Program>, t: Throwable) {
                                 Log.d(TAG, "onFailure 에러: " + t.message.toString())
                             }
                         })
@@ -189,6 +188,18 @@ class BluetoothLeService: Service() {
         sendBroadcast(intent)
     }
 
+    private fun broadcastUpdate(action: String, program: Program) {
+        val intent = Intent(action)
+        intent.putExtra("program", program as java.io.Serializable)
+        sendBroadcast(intent)
+    }
+
+    private fun broadcastUpdate(action: String, caption: Caption) {
+        val intent = Intent(action)
+        intent.putExtra("caption", caption as java.io.Serializable)
+        sendBroadcast(intent)
+    }
+
     override fun onUnbind(intent: Intent?): Boolean {
         close()
         return super.onUnbind(intent)
@@ -202,8 +213,8 @@ class BluetoothLeService: Service() {
         }
     }
 
-    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
-    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
+    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
+    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
 
     private val requestDefault = "0"
     private val resultDefault = "-1"

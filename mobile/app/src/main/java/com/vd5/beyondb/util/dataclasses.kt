@@ -1,6 +1,6 @@
 package com.vd5.beyondb.util
 import com.google.gson.annotations.SerializedName
-
+import java.io.Serializable
 
 
 data class ProgramRequest(
@@ -16,7 +16,7 @@ data class Program(
     val programId: String,
     @SerializedName("programName")
     val programName: String,
-)
+) : Serializable
 
 data class CaptionRequest(
     @SerializedName("deviceId")
@@ -29,7 +29,7 @@ data class CaptionRequest(
 data class Caption(
     @SerializedName("result")
     val result: String,
-)
+) : Serializable
 
 // papago data class
 data class ResultTransferPapago (
@@ -44,10 +44,4 @@ data class Result (
     var srcLangType: String = "",
     var tarLangType: String = "",
     var translatedText: String = ""
-)
-
-data class ProgramDetail(
-    // TODO 프로그램 정보 포맷 입력 필요
-    @SerializedName("programId")
-    val programId: String,
 )

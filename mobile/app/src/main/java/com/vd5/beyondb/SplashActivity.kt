@@ -10,7 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 class SplashActivity : AppCompatActivity() {
 
     private val handler = Handler(Looper.getMainLooper())
-    private val DURATION : Long = 3000
+    private val DURATION : Long = 1500
 
     private val TAG = "splashActivity"
 
