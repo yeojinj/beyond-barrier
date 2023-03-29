@@ -1,5 +1,6 @@
 package com.vd5.beyondb.controller;
 
+import com.vd5.beyondb.model.Casting;
 import com.vd5.beyondb.model.Program;
 import com.vd5.beyondb.model.ProgramLog;
 import com.vd5.beyondb.model.dto.request.CaptureDto;
@@ -9,6 +10,7 @@ import com.vd5.beyondb.service.CastingService;
 import com.vd5.beyondb.service.ProgramLogService;
 import com.vd5.beyondb.service.ProgramService;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -59,7 +61,13 @@ public class ProgramController {
     public ResponseEntity<DetectDto> detectResult(@PathVariable("logId") String logId) {
         ProgramLog programLog = programLogService.findProgramLogById(Long.parseLong(logId));
         Program program = programLog.getProgram();
-        DetectDto detectDto = new DetectDto(program.getId(), program.getName());
+        List<Casting> castingList = castingService.findByProgram(program);
+        List<String> programCasting = new ArrayList<>();
+        for (Casting c : castingList) {
+            programCasting.add(c.getCast_name());
+        }
+        DetectDto detectDto = new DetectDto(program.getId(), program.getName(),
+            program.getContent(), programCasting);
         return new ResponseEntity<>(detectDto, HttpStatus.OK);
     }
 
