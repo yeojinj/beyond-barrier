@@ -4,7 +4,7 @@ import os
 
 ######################## SELECT #######################
 # Select GPU Device
-os.environ["CUDA_VISIBLE_DEVICES"] = '5'
+os.environ["CUDA_VISIBLE_DEVICES"] = '8'
 #######################################################
 
 
@@ -43,22 +43,22 @@ def logodetect(img):
     
     ##### (1) S3 link를 이용하여 load
     image = io.imread(img)
-    im = PIL.Image.fromarray(image)  # PIL image
+    im1 = PIL.Image.fromarray(image)    # PIL image
     
     ##### (2) Image File을 load
-    # im = PIL.Image.open(img)  # PIL image
+    # im1 = PIL.Image.open(img)  # PIL image
     
     #######################################################
     
-    results = logo_model(im)
-    df = results.pandas().xyxy[0]  # result in pandas.DataFrame
-
-    # This code should be fixed
+    results = logo_model(im1) # batch of images
+    df = results.pandas().xyxy[0] # result in pandas.DataFrame
+    
     for i in range(0, df.shape[0]):
         row = df.iloc[i]
         if row['confidence'] >= 0.9:
+            # if logo detection successes
             return row['name']
-        
+    
     # if logo detection fails
     return "-1"
 
@@ -169,10 +169,10 @@ class ClipCaptionModel(nn.Module):
         # (3) 
         # start = time.time()
         if prefix_length > 10:  # not enough memory
-            # print("(3-1)")
+#             print("(3-1)")
             self.clip_project = nn.Linear(prefix_size, self.gpt_embedding_size * prefix_length)
         else:
-            # print("(3-2)")
+#             print("(3-2)")
             self.clip_project = MLP((prefix_size, (self.gpt_embedding_size * prefix_length) // 2, self.gpt_embedding_size * prefix_length))
 
         # end = time.time()
@@ -370,8 +370,8 @@ def image_caption():
         result = inference('server/static/imagecaption/' + f.filename)
         
         ##### (2) Local Server 폴더 구조
-        # f.save('./static/imagecaption/' + f.filename)
-        # result = inference('./static/imagecaption/' + f.filename)
+#         f.save('./static/imagecaption/' + f.filename)
+#         result = inference('./static/imagecaption/' + f.filename)
         
         #######################################################
         return result
@@ -389,8 +389,8 @@ def logo_detect():
         result = logodetect('server/static/logodetect' + f.filename)
         
         ##### (2) Local Server 폴더 구조
-        # f.save('./static/logodetect/' + f.filename)
-        # result = logodetect('./static/logodetect/' + f.filename)
+#         f.save('./static/logodetect/' + f.filename)
+#         result = logodetect('./static/logodetect/' + f.filename)
         
         #######################################################
         return result
