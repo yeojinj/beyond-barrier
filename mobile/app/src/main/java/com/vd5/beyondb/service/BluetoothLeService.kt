@@ -106,6 +106,7 @@ class BluetoothLeService: Service() {
                 if (String(value) != resultDefault) {
                     pollingState = false
                     val charaUuid = characteristic.uuid.toString()
+                    Log.d(TAG, "onCharacteristicRead: $charaUuid")
                     if (charaUuid == UUID_CAPTION_RESULT) {
                         Log.d(TAG, "onCharacteristicRead: 캡션 결과 http 요청")
                         val retrofit = Retrofit.Builder().baseUrl(baseUrl)
@@ -212,8 +213,8 @@ class BluetoothLeService: Service() {
         }
     }
 
-    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
-    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
+    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
+    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
 
     private val requestDefault = "0"
     private val resultDefault = "-1"
