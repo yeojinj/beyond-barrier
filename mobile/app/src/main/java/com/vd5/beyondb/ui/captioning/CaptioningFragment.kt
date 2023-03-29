@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.R
 import com.vd5.beyondb.databinding.FragmentCaptioningBinding
 import com.vd5.beyondb.util.Caption
@@ -73,42 +74,7 @@ class CaptioningFragment : Fragment() {
 
 
         notificationsBtn.setOnClickListener {
-            notificationText.text = ""
-            notificationsBtn.isEnabled = false
-            notificationsBtn.text = "processing.."
-
-            val captionRequest = CaptionRequest( deviceId = "", imgPath = imgUrl[imgNum],   captureTime = "2023-03-20T16:25:00" )
-            service.getCaption(captionRequest)?.enqueue(object : Callback<Caption> {
-                override fun onResponse(call: Call<Caption>, response: Response<Caption>) {
-                    if(response.isSuccessful){
-                        var captionText: String = response.body()?.result.toString()
-                        var returnText : String = ""
-                        Log.d("http", "onResponse 성공: ${captionText}")
-
-                        papagoService.transferPapago(CLIENT_ID,CLIENT_SECRET,"en","ko",captionText)
-                            .enqueue(object : Callback<ResultTransferPapago> {
-                                override fun onResponse(call: Call<ResultTransferPapago>, response: Response<ResultTransferPapago>
-                                ) {
-                                    returnText = response.body()?.message?.result?.translatedText.toString()
-                                    Log.d("http", "papago api 통신 성공 : ${returnText}")
-                                    notificationText.text = returnText
-                                    TTSrun(returnText)
-                                }
-
-                                override fun onFailure(call: Call<ResultTransferPapago>, t: Throwable) {
-                                    Log.d("http", "papago api 통신 성공 실패 : $t")
-                                }
-                            })
-                        notificationsBtn.isEnabled = true
-                        notificationsBtn.text = "CAPTION"
-                    }else{
-                        Log.d("http", "onResponse 실패")
-                    }
-                }
-                override fun onFailure(call: Call<Caption>, t: Throwable) {
-                    Log.d("http", "onFailure 에러: " + t.message.toString());
-                }
-            })
+            (activity as MainActivity).TTSrun("마이크 테스트입니다")
         }
 
 
