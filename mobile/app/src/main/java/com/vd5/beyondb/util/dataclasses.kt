@@ -16,7 +16,14 @@ data class Program(
     val programId: String,
     @SerializedName("programName")
     val programName: String,
+    @SerializedName("programContent")
+    val programContent: String,
+    @SerializedName("programCasting")
+    val programCasting: List<String>,
 ) : Serializable
+
+
+
 
 data class CaptionRequest(
     @SerializedName("deviceId")
