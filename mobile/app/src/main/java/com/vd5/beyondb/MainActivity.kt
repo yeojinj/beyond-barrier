@@ -11,7 +11,6 @@ import android.bluetooth.le.ScanCallback
 import android.bluetooth.le.ScanResult
 import android.content.*
 import android.content.pm.PackageManager
-import android.nfc.NfcAdapter
 import android.nfc.NfcAdapter.EXTRA_DATA
 import android.os.Bundle
 import android.os.Handler
@@ -30,7 +29,6 @@ import com.vd5.beyondb.ui.captioning.CaptioningFragment
 import com.vd5.beyondb.ui.home.HomeFragment
 import com.vd5.beyondb.ui.program.ProgramFragment
 import com.vd5.beyondb.ui.settings.SettingsFragment
-import com.vd5.beyondb.util.Program
 import java.util.*
 
 
@@ -224,24 +222,24 @@ class MainActivity : AppCompatActivity() {
     }
 
 
-    private val deviceName = "Tizen"
-    private val SERVICE_UUID = "00005555-0000-1000-8000-555555555555"
-
-    // TODO UUID 설정 필요
-    private val UUID_CAPTION_REQUEST = "00ca58e9-0000-1000-8000-555555555555"
-    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
-    private val UUID_PROGRAM_REQUEST = "00d158e9-0000-1000-8000-555555555555"
-    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
-
-
-//    private val deviceName = "vd5"
-//    private val SERVICE_UUID = "1002a1d6-39db-43e8-b45e-c4a000543e53"
+//    private val deviceName = "Tizen"
+//    private val SERVICE_UUID = "00005555-0000-1000-8000-555555555555"
 //
 //    // TODO UUID 설정 필요
-//    private val UUID_CAPTION_REQUEST = "24c33316-87b2-4159-9dbd-87d730e27745"
-//    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
-//    private val UUID_PROGRAM_REQUEST = "1e2d05d0-bcf5-4f0e-a28d-f5ee7b1df4cc"
-//    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
+//    private val UUID_CAPTION_REQUEST = "00ca58e9-0000-1000-8000-555555555555"
+//    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
+//    private val UUID_PROGRAM_REQUEST = "00d158e9-0000-1000-8000-555555555555"
+//    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
+
+
+    private val deviceName = "vd5"
+    private val SERVICE_UUID = "1002a1d6-39db-43e8-b45e-c4a000543e53"
+
+    // TODO UUID 설정 필요
+    private val UUID_CAPTION_REQUEST = "24c33316-87b2-4159-9dbd-87d730e27745"
+    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
+    private val UUID_PROGRAM_REQUEST = "1e2d05d0-bcf5-4f0e-a28d-f5ee7b1df4cc"
+    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
 
 
     private fun accessGattServices(gattServices: List<BluetoothGattService?>?) {
@@ -343,6 +341,11 @@ class MainActivity : AppCompatActivity() {
 
     fun TTSrun(string: String) {
         textToSpeech?.speak(string, TextToSpeech.QUEUE_FLUSH, null, null)
+        textToSpeech?.playSilentUtterance(750, TextToSpeech.QUEUE_ADD,null) // deley시간 설정
+    }
+
+    fun TTSrun(string: String, utteranceId: String) {
+        textToSpeech?.speak(string, TextToSpeech.QUEUE_FLUSH, null, utteranceId)
         textToSpeech?.playSilentUtterance(750, TextToSpeech.QUEUE_ADD,null) // deley시간 설정
     }
 
