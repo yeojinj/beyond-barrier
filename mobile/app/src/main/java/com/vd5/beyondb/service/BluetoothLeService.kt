@@ -9,6 +9,8 @@ import android.nfc.NfcAdapter.EXTRA_DATA
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import com.vd5.beyondb.BuildConfig
+import com.vd5.beyondb.R
 import com.vd5.beyondb.util.Caption
 import com.vd5.beyondb.util.Program
 import com.vd5.beyondb.util.RetrofitService
@@ -219,14 +221,8 @@ class BluetoothLeService: Service() {
         }
     }
 
-//    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
-//    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
-
-    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
-    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
-
-//    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
-//    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
+    private val UUID_CAPTION_RESULT = BuildConfig.UUID_CAPTION_RESULT
+    private val UUID_PROGRAM_RESULT = BuildConfig.UUID_PROGRAM_RESULT
 
     private val requestDefault = "0"
     private val resultDefault = "-1"
