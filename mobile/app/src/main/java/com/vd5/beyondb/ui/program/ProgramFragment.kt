@@ -63,12 +63,13 @@ class ProgramFragment : Fragment() {
             Log.d(TAG, "onReceive: " + intent.action)
             when (intent.action) {
                 BluetoothLeService.ACTION_GATT_PROGRAM -> {
-                    Log.d(TAG, "onReceive: 프로그램 결과 수신")
                     val program = intent.getSerializableExtra("program") as Program
-                    Log.d(TAG, "program 결과 : $program")
-                    val programName = "프로그램 이름은 ${program?.programName}입니다."
-                    programText?.text = programName
-                    (activity as MainActivity).TTSrun(programName)
+                    Log.d(TAG, "onReceive: 프로그램 결과 수신 : $program")
+
+                    var programResult = programResult(program).toString()
+
+                    (activity as MainActivity).TTSrun(programResult)
+                    programText?.text = programResult
                     programBtn?.text = "READY"
                 }
                 BluetoothLeService.ACTION_REQUEST_FAIL -> {
@@ -81,6 +82,15 @@ class ProgramFragment : Fragment() {
             }
         }
     }
+
+    fun programResult(program: Program){
+        val result = "프로그램 이름은 ${program?.programName}입니다.\n ${program?.programContent} 입니다. "
+
+
+
+    }
+
+
 
     override fun onResume() {
         super.onResume()
