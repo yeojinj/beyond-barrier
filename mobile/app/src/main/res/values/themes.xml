@@ -2,7 +2,6 @@
     <!-- Base application theme. -->
     <style name="Theme.Beyondb" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
-        <item name="android:fontFamily">@font/koddiudongothic_regular</item>
         <item name="colorPrimary">@color/blue</item>
         <item name="colorPrimaryVariant">@color/purple_700</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -13,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:fontFamily">@font/koddiudongothic_regular</item>
     </style>
 
 </resources>

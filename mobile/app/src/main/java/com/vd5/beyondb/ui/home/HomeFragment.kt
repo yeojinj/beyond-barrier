@@ -29,7 +29,7 @@ class HomeFragment : Fragment() {
         val textView = _binding.textTutorial
         Handler(Looper.getMainLooper()).postDelayed({
             (activity as MainActivity).TTSrun(textView.text.toString())
-        }, 500)
+        }, 200)
         val tutorialStartButton = _binding.buttonTutorial
         tutorialStartButton.setOnClickListener { tutorial() }
         return _binding.root
