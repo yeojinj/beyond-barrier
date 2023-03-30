@@ -1,32 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.preference.PreferenceCategory
+        android:title="설정"
+        android:layout="@layout/fragment_settings"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:selectable="false"
+        >
 
 
-    <ListPreference
+    <androidx.preference.ListPreference
+
         android:key="tts_speed"
         android:title="TTS 속도"
         android:summary="TTS 기능의 속도를 조절하려면 선택하세요"
         android:entries="@array/tts_speed_entry"
         android:entryValues="@array/tts_speed_values"
         android:defaultValue="1.0"
+        android:icon="@drawable/ic_tts_speed"
         />
 
-    <ListPreference
+
+    <androidx.preference.ListPreference
         android:key="font_size"
         android:title="폰트 크기"
-        android:summary="앱의 폰트 크기를 조절하려면 선택하세요"
+        android:summary="어플의 폰트 크기를 조절하려면 선택하세요"
         android:entries="@array/font_size_entry"
         android:entryValues="@array/font_size_values"
         android:defaultValue="16"
+        android:icon="@drawable/ic_font_size"
         />
 
-    <ListPreference
+    <androidx.preference.ListPreference
         android:key="captioning_interval"
-        android:title="자동 캡셔닝 간격"
-        android:summary="자동 캡셔닝 요청 간격을 조절하려면 선택하세요"
+        android:title="자동 화면 해설 간격"
+        android:summary="화면 해설 요청 간격을 조절하려면 선택하세요"
         android:entries="@array/captioning_interval_entry"
         android:entryValues="@array/captioning_interval_values"
         android:defaultValue="7"
+        android:icon="@drawable/ic_captioning_interval"
         />
 
-</PreferenceScreen>
+    </androidx.preference.PreferenceCategory>
+
+
+</androidx.preference.PreferenceScreen>

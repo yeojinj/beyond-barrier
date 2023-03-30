@@ -98,58 +98,64 @@ class BluetoothLeService: Service() {
         override fun onCharacteristicRead(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic,
-            value: ByteArray,
             status: Int
         ) {
+            val value = characteristic.value
             Log.d(TAG, "readValue: ${String(value)}")
             if (String(value) != requestDefault) {
                 if (String(value) != resultDefault) {
                     pollingState = false
-                    val charaUuid = characteristic.uuid.toString()
-                    Log.d(TAG, "onCharacteristicRead: $charaUuid")
-                    if (charaUuid == UUID_CAPTION_RESULT) {
-                        Log.d(TAG, "onCharacteristicRead: 캡션 결과 http 요청")
-                        val retrofit = Retrofit.Builder().baseUrl(baseUrl)
-                            .addConverterFactory(GsonConverterFactory.create()).build()
-                        val service = retrofit.create(RetrofitService::class.java)
-                        val captionNum = String(value)
-                        service.getCaption(captionNum).enqueue(object : Callback<Caption> {
-                            override fun onResponse(call: Call<Caption>, response: Response<Caption>) {
-                                if(response.isSuccessful){
-                                    val result: Caption? = response.body()
-                                    Log.d(TAG, "onResponse 성공: " + result?.result)
-                                    broadcastUpdate(ACTION_GATT_CAPTIONING, result!!)
-                                }else{
-                                    Log.d(TAG, "onResponse 실패")
+                    //
+                    if (String(value) == programFail) {
+                        val failMessage = "로고 인식에 실패하였습니다.\n화면에 로고가 없을 수 도 있습니다."
+                        broadcastUpdate(ACTION_REQUEST_FAIL, failMessage)
+                    } else {
+                        val charaUuid = characteristic.uuid.toString()
+                        Log.d(TAG, "onCharacteristicRead: $charaUuid")
+                        if (charaUuid == UUID_CAPTION_RESULT) {
+                            Log.d(TAG, "onCharacteristicRead: 캡션 결과 http 요청")
+                            val retrofit = Retrofit.Builder().baseUrl(baseUrl)
+                                .addConverterFactory(GsonConverterFactory.create()).build()
+                            val service = retrofit.create(RetrofitService::class.java)
+                            val captionNum = String(value)
+                            service.getCaption(captionNum).enqueue(object : Callback<Caption> {
+                                override fun onResponse(call: Call<Caption>, response: Response<Caption>) {
+                                    if(response.isSuccessful){
+                                        val result: Caption? = response.body()
+                                        Log.d(TAG, "onResponse 성공: " + result?.result)
+                                        broadcastUpdate(ACTION_GATT_CAPTIONING, result!!)
+                                    }else{
+                                        Log.d(TAG, "onResponse 실패")
+                                    }
                                 }
-                            }
 
-                            override fun onFailure(call: Call<Caption>, t: Throwable) {
-                                Log.d(TAG, "onFailure 에러: " + t.message.toString())
-                            }
-                        })
-
-                    } else if (charaUuid == UUID_PROGRAM_RESULT) {
-                        // TODO 받은 프로그램 번호를 서버에 요청하기
-                        val retrofit = Retrofit.Builder().baseUrl(baseUrl)
-                            .addConverterFactory(GsonConverterFactory.create()).build()
-                        val service = retrofit.create(RetrofitService::class.java)
-                        val programNum = String(value)
-                        service.getProgram(programNum).enqueue(object : Callback<Program> {
-                            override fun onResponse(call: Call<Program>, response: Response<Program>) {
-                                if(response.isSuccessful){
-                                    val result: Program? = response.body()
-                                    Log.d(TAG, "onResponse 성공: ${result?.programId}")
-                                    broadcastUpdate(ACTION_GATT_PROGRAM, result!!)
-                                }else{
-                                    Log.d(TAG, "onResponse 실패")
+                                override fun onFailure(call: Call<Caption>, t: Throwable) {
+                                    Log.d(TAG, "onFailure 에러: " + t.message.toString())
                                 }
-                            }
+                            })
 
-                            override fun onFailure(call: Call<Program>, t: Throwable) {
-                                Log.d(TAG, "onFailure 에러: " + t.message.toString())
-                            }
-                        })
+                        } else if (charaUuid == UUID_PROGRAM_RESULT) {
+                            // TODO 받은 프로그램 번호를 서버에 요청하기
+                            val retrofit = Retrofit.Builder().baseUrl(baseUrl)
+                                .addConverterFactory(GsonConverterFactory.create()).build()
+                            val service = retrofit.create(RetrofitService::class.java)
+                            val programNum = String(value)
+                            service.getProgram(programNum).enqueue(object : Callback<Program> {
+                                override fun onResponse(call: Call<Program>, response: Response<Program>) {
+                                    if(response.isSuccessful){
+                                        val result: Program? = response.body()
+                                        Log.d(TAG, "onResponse 성공: ${result?.programId}")
+                                        broadcastUpdate(ACTION_GATT_PROGRAM, result!!)
+                                    }else{
+                                        Log.d(TAG, "onResponse 실패")
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<Program>, t: Throwable) {
+                                    Log.d(TAG, "onFailure 에러: " + t.message.toString())
+                                }
+                            })
+                        }
                     }
                 }
             }
@@ -213,11 +219,18 @@ class BluetoothLeService: Service() {
         }
     }
 
-    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
-    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
+//    private val UUID_CAPTION_RESULT = "00ca55a1-0000-1000-8000-555555555555"
+//    private val UUID_PROGRAM_RESULT = "00d155a1-0000-1000-8000-555555555555"
+
+    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
+    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
+
+//    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
+//    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
 
     private val requestDefault = "0"
     private val resultDefault = "-1"
+    private val programFail = "-2"
 
     fun getSupportedGattServices(): List<BluetoothGattService?>? {
         return bluetoothGatt?.services
@@ -283,6 +296,9 @@ class BluetoothLeService: Service() {
             "com.vd5.bluetooth.le.ACTION_GATT_CAPTIONING"
         const val ACTION_GATT_PROGRAM =
             "com.vd5.bluetooth.le.ACTION_GATT_PROGRAM"
+        const val ACTION_REQUEST_FAIL =
+            "com.vd5.bluetooth.le.ACTION_REQUEST_FAIL"
+
 
         private const val STATE_DISCONNECTED = 0
         private const val STATE_CONNECTED = 2

@@ -6,16 +6,43 @@
     android:layout_height="match_parent"
     tools:context=".ui.captioning.CaptioningFragment">
 
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/container"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:orientation="vertical"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:selectable="false"
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="0dp">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/koddiudongothic_extrabold"
+            android:gravity="center"
+            android:text="화면 해설"
+            android:textAlignment="center"
+            android:textSize="40sp" />
+    </com.google.android.material.card.MaterialCardView>
+
 
     <TextView
         android:id="@+id/text_notifications"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
         android:textAlignment="center"
         android:textSize="20sp"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="16dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/container"
+        tools:layout_editor_absoluteX="0dp" />
 
     <Button
         android:id="@+id/button_notifications"
