@@ -6,6 +6,9 @@
     <androidx.preference.PreferenceCategory
         android:title="설정"
         android:layout="@layout/fragment_settings"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:selectable="false"
         >
 
 
