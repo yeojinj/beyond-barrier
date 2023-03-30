@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.nfc.NfcAdapter
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -71,6 +72,13 @@ class ProgramFragment : Fragment() {
                     (activity as MainActivity).TTSrun(programName)
                     programBtn?.text = "READY"
                 }
+                BluetoothLeService.ACTION_REQUEST_FAIL -> {
+                    Log.d(TAG, "onReceive: 로고 인식 실패 fragment에서 받음")
+                    val message = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
+                    programText?.text = message
+                    (activity as MainActivity).TTSrun(message.toString())
+                    programBtn?.text = "READY"
+                }
             }
         }
     }
@@ -88,6 +96,7 @@ class ProgramFragment : Fragment() {
     private fun makeGattUpdateIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(BluetoothLeService.ACTION_GATT_PROGRAM)
+            addAction(BluetoothLeService.ACTION_REQUEST_FAIL)
         }
     }
 
