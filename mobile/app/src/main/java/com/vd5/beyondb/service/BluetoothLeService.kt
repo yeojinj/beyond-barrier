@@ -98,9 +98,9 @@ class BluetoothLeService: Service() {
         override fun onCharacteristicRead(
             gatt: BluetoothGatt,
             characteristic: BluetoothGattCharacteristic,
-            value: ByteArray,
             status: Int
         ) {
+            val value = characteristic.value
             Log.d(TAG, "readValue: ${String(value)}")
             if (String(value) != requestDefault) {
                 if (String(value) != resultDefault) {
@@ -224,6 +224,9 @@ class BluetoothLeService: Service() {
 
     private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
     private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
+
+//    private val UUID_CAPTION_RESULT = "0e68b82c-bcec-48ce-b58a-8791b74652fb"
+//    private val UUID_PROGRAM_RESULT = "28e532e4-782d-41ef-b398-f37fc4998ca4"
 
     private val requestDefault = "0"
     private val resultDefault = "-1"
