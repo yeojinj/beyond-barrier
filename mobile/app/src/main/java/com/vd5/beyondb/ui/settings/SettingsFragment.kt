@@ -29,7 +29,7 @@ class SettingsFragment :  Fragment() {
         if (savedInstanceState == null) {
             val preferenceFragment = PreferenceList()
             val ft = requireActivity().supportFragmentManager.beginTransaction()
-            ft.add(R.id.preferenceContainer, preferenceFragment)
+            ft.add(R.id.captioning_content, preferenceFragment)
             ft.commit()
         }
 

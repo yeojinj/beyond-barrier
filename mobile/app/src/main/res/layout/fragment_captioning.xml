@@ -3,57 +3,32 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ui.captioning.CaptioningFragment">
+    android:layout_height="match_parent">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/title_container"
+    <TextView
+        android:id="@+id/captioning_title"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:focusable="false"
-        android:importantForAccessibility="no"
-        android:orientation="vertical"
-        android:selectable="false"
-        app:cardCornerRadius="10dp"
-        app:cardUseCompatPadding="true"
+        android:fontFamily="@font/koddiudongothic_extrabold"
+        android:gravity="center"
+        android:text="@string/title_captioning"
+        android:textSize="40sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        style="?attr/borderlessButtonStyle"
-        app:cardBackgroundColor="@color/background"
-        >
+        app:layout_constraintTop_toTopOf="parent" />
 
-
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:fontFamily="@font/koddiudongothic_extrabold"
-            android:gravity="center"
-            android:text="화면 해설"
-            android:textAlignment="center"
-            android:textSize="40sp" />
-
-    </com.google.android.material.card.MaterialCardView>
-
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/content_container"
-        style="@style/YourCardView"
+    <androidx.cardview.widget.CardView
+        android:id="@+id/captioning_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginBottom="90dp"
-        android:focusable="false"
-        android:importantForAccessibility="no"
-        android:orientation="vertical"
-        android:selectable="false"
-        app:cardCornerRadius="10dp"
-        app:cardUseCompatPadding="true"
+        android:layout_marginBottom="110dp"
+        app:cardCornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title_container"
+        app:layout_constraintTop_toBottomOf="@+id/captioning_title"
         app:strokeWidth="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -61,7 +36,7 @@
             android:layout_height="match_parent">
 
             <TextView
-                android:id="@+id/text_captioning"
+                android:id="@+id/captioning_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
@@ -85,9 +60,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
