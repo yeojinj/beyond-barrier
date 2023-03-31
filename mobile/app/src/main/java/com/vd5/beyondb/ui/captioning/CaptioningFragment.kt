@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -23,6 +24,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
 import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.databinding.FragmentCaptioningBinding
 import com.vd5.beyondb.service.BluetoothLeService
@@ -61,6 +63,11 @@ class CaptioningFragment : Fragment(), SensorEventListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        // TODO 자동 화면 해설 preference key 넣기
+        captionFlag = preferences.getBoolean("captioning", true)
+
         binding = FragmentCaptioningBinding.inflate(inflater,container,false)
 
         sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
