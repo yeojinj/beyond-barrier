@@ -200,7 +200,7 @@ namespace BeyondBarrier
                 }
 
                 Log.Info("BB_check", "Image caption function started");
-                string captionResult = await ImageCaptionRequest(S3ImagePath, DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"));
+                string captionResult = await ImageCaptionRequest(S3ImagePath);
                 Log.Info("BB_check", "Image Caption Request completed");
                 if (captionResult.Equals("error") || captionResult == null)
                 {
@@ -265,7 +265,7 @@ namespace BeyondBarrier
                     return;
                 }
                 
-                string ProgramInfoResult = await ProgramInfoRequest(S3ImagePath, DateTime.Now.ToString("yyyy-MM-ddThh:mm:ss"));
+                string ProgramInfoResult = await ProgramInfoRequest(S3ImagePath);
                 Log.Info("BB_check", "Request completed");
                 if (ProgramInfoResult.Equals("error") || ProgramInfoResult == null)
                 {
@@ -344,7 +344,7 @@ namespace BeyondBarrier
                 return "error";
             }
 
-            public async Task<string> ImageCaptionRequest(string imgPath, string captureTime)
+            public async Task<string> ImageCaptionRequest(string imgPath)
             {
                 //explain : method that sends a http request
                 //returns response content string
@@ -356,8 +356,7 @@ namespace BeyondBarrier
                 object requestBody = new
                 {
                     deviceId = BluetoothAdapter.Name,
-                    imgPath = imgPath,
-                    captureTime = captureTime,
+                    imgPath = imgPath
                 };
 
                 string requestBodyJson = JsonSerializer.Serialize(requestBody);
@@ -383,7 +382,7 @@ namespace BeyondBarrier
                 return responseContent;
             }
 
-            public async Task<string> ProgramInfoRequest(string imgPath, string captureTime)
+            public async Task<string> ProgramInfoRequest(string imgPath)
             {
                 //explain : method that sends a http request
                 //returns response content string
@@ -393,8 +392,7 @@ namespace BeyondBarrier
                 object requestBody = new
                 {
                     deviceId = BluetoothAdapter.Name,
-                    imgPath = imgPath,
-                    captureTime = captureTime,
+                    imgPath = imgPath
                 };
 
                 string requestBodyJson = JsonSerializer.Serialize(requestBody);
