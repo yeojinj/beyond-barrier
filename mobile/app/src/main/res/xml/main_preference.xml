@@ -35,11 +35,10 @@
         />
 
 
-    <androidx.preference.CheckBoxPreference
-        android:key="keyword_screen"
-        android:summary="사용 안 함"
-        android:title="키워드 알림"
-
+    <androidx.preference.SwitchPreference
+        android:key="captioning_auto"
+        android:summary="연속적으로 화면 해설하는 기능을 설정할 수 있습니다."
+        android:title="연속 화면 해설"
         />
 
     </androidx.preference.PreferenceCategory>

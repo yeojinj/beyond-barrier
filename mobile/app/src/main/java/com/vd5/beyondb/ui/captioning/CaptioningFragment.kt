@@ -5,25 +5,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.content.SharedPreferences
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.os.Build
-import android.os.Build.VERSION_CODES.S
 import android.os.Bundle
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import androidx.preference.PreferenceManager
@@ -71,8 +65,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
     ): View {
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
-        // TODO 자동 화면 해설 preference key 넣기
-        captionFlag = preferences.getBoolean("captioning", true)
+        captionFlag = preferences.getBoolean("captioning_auto", true)
 
         binding = FragmentCaptioningBinding.inflate(inflater,container,false)
 
@@ -98,7 +91,6 @@ class CaptioningFragment : Fragment(), SensorEventListener {
         return binding.root
     }
 
-    private var notificationsBtn : Button? = null
     private var notificationText : TextView? = null
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -110,8 +102,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                 BluetoothLeService.ACTION_GATT_CAPTIONING -> {
                     val caption = intent.getSerializableExtra("caption") as Caption
                     Log.d(TAG, "onReceive: captionFragment에서의 caption결과 수신 : $caption")
-
-                    var captionResult = caption?.result!!
+                    var captionResult = caption.result
                     papagoService.transferPapago(CLIENT_ID,CLIENT_SECRET,"en","ko",captionResult)
                         .enqueue(object : Callback<ResultTransferPapago> {
                             override fun onResponse(call: Call<ResultTransferPapago>, response: Response<ResultTransferPapago>
@@ -119,7 +110,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                                 captionResult = response.body()?.message?.result?.translatedText.toString()
                                 Log.d("http", "papago api 통신 성공 : ${captionResult}")
                                 notificationText?.text = captionResult
-                                // TODO 설정에서 가져와서 이어서 말할 지 결정
+                                Log.d(TAG, "onResponse: captionFlag == $captionFlag")
                                 (activity as MainActivity).textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
                                     override fun onStart(p0: String?) {
                                     }
@@ -132,7 +123,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                                     override fun onError(p0: String?) {
                                     }
                                 })
-                                (activity as MainActivity).TTSrun(captionResult)
+                                (activity as MainActivity).TTSrun(captionResult, "captioning")
                                 binding.loadingImage.isVisible = false
                             }
 
