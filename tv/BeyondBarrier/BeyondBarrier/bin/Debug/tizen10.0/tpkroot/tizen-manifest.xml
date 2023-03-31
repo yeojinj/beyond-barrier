@@ -21,6 +21,7 @@
         <privilege>http://tizen.org/privilege/mediacontroller.server</privilege>
         <privilege>http://tizen.org/privilege/push</privilege>
         <privilege>http://tizen.org/privilege/display</privilege>
+        <privilege>http://tizen.org/privilege/systemsettings</privilege>
     </privileges>
     <dependencies />
     <provides-appdefined-privileges />
