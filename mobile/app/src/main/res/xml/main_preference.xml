@@ -3,15 +3,6 @@
 <androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <androidx.preference.PreferenceCategory
-        android:title="설정"
-        android:layout="@layout/fragment_settings"
-        android:focusable="false"
-        android:importantForAccessibility="no"
-        android:selectable="false"
-        >
-
-
     <androidx.preference.ListPreference
 
         android:key="tts_speed"
@@ -21,6 +12,7 @@
         android:entryValues="@array/tts_speed_values"
         android:defaultValue="1.0"
         android:icon="@drawable/ic_tts_speed"
+
         />
 
 
@@ -35,14 +27,12 @@
         />
 
 
-    <androidx.preference.CheckBoxPreference
-        android:key="keyword_screen"
-        android:summary="사용 안 함"
-        android:title="키워드 알림"
-
+    <androidx.preference.SwitchPreference
+        android:key="captioning_auto"
+        android:summary="화면 해설 기능의 반복 설정"
+        android:title="연속 화면 해설"
+        android:icon="@drawable/baseline_replay_24"
         />
-
-    </androidx.preference.PreferenceCategory>
 
 
 </androidx.preference.PreferenceScreen>

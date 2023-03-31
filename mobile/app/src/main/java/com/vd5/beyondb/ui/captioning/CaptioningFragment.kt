@@ -5,19 +5,22 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
-import android.os.Build
+import android.hardware.Sensor
+import android.hardware.SensorEvent
+import android.hardware.SensorEventListener
+import android.hardware.SensorManager
 import android.os.Bundle
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
-import androidx.annotation.RequiresApi
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
+import androidx.preference.PreferenceManager
 import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.R
 import com.vd5.beyondb.databinding.FragmentCaptioningBinding
@@ -28,8 +31,9 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.Math.sqrt
 
-class CaptioningFragment : Fragment() {
+class CaptioningFragment : Fragment(), SensorEventListener {
 
     lateinit var binding : FragmentCaptioningBinding
 
@@ -49,12 +53,24 @@ class CaptioningFragment : Fragment() {
 
     // https://hwanine.github.io/android/Retrofit/
 
+    private lateinit var sensorManager: SensorManager
+    private lateinit var accelerometer: Sensor
+
+    private var captionFlag = true
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+
+        val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        captionFlag = preferences.getBoolean("captioning_auto", true)
+
         binding = FragmentCaptioningBinding.inflate(inflater,container,false)
+
+        sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         notificationText = binding.textCaptioning
         notificationText?.text = ""
@@ -75,7 +91,6 @@ class CaptioningFragment : Fragment() {
         return binding.root
     }
 
-    private var notificationsBtn : Button? = null
     private var notificationText : TextView? = null
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
@@ -87,8 +102,7 @@ class CaptioningFragment : Fragment() {
                 BluetoothLeService.ACTION_GATT_CAPTIONING -> {
                     val caption = intent.getSerializableExtra("caption") as Caption
                     Log.d(TAG, "onReceive: captionFragment에서의 caption결과 수신 : $caption")
-
-                    var captionResult = caption?.result!!
+                    var captionResult = caption.result
                     papagoService.transferPapago(CLIENT_ID,CLIENT_SECRET,"en","ko",captionResult)
                         .enqueue(object : Callback<ResultTransferPapago> {
                             override fun onResponse(call: Call<ResultTransferPapago>, response: Response<ResultTransferPapago>
@@ -96,7 +110,20 @@ class CaptioningFragment : Fragment() {
                                 captionResult = response.body()?.message?.result?.translatedText.toString()
                                 Log.d("http", "papago api 통신 성공 : ${captionResult}")
                                 notificationText?.text = captionResult
-                                (activity as MainActivity).TTSrun(captionResult)
+                                Log.d(TAG, "onResponse: captionFlag == $captionFlag")
+                                (activity as MainActivity).textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                                    override fun onStart(p0: String?) {
+                                    }
+                                    // 완료 시점 마다 신호
+                                    override fun onDone(utteranceId: String) {
+                                        if (captionFlag) {
+                                            (activity as MainActivity).captioningRequest()
+                                        }
+                                    }
+                                    override fun onError(p0: String?) {
+                                    }
+                                })
+                                (activity as MainActivity).TTSrun(captionResult, "captioning")
                                 binding.loadingImage.isVisible = false
                             }
 
@@ -112,10 +139,16 @@ class CaptioningFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         activity?.registerReceiver(gattUpdateReceiver, makeGattUpdateIntentFilter())
+        sensorManager.registerListener(
+            this,
+            accelerometer,
+            SensorManager.SENSOR_DELAY_NORMAL
+        )
     }
 
     override fun onPause() {
         super.onPause()
+        sensorManager.unregisterListener(this)
         activity?.unregisterReceiver(gattUpdateReceiver)
     }
 
@@ -128,6 +161,35 @@ class CaptioningFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         (activity as MainActivity).textToSpeech?.stop()
+    }
+
+    private var lastShakeTime = 0L
+
+    override fun onSensorChanged(event: SensorEvent?) {
+        if (event?.sensor?.type == Sensor.TYPE_ACCELEROMETER) {
+            val x = event.values[0]
+            val y = event.values[1]
+            val z = event.values[2]
+
+            val acceleration = sqrt((x * x + y * y + z * z).toDouble())
+            val currentShakeTime = System.currentTimeMillis()
+
+            val shakeThresholdGravity = 1.7F
+            val shakeInterval = 500
+
+            if (acceleration / SensorManager.GRAVITY_EARTH > shakeThresholdGravity) {
+                if (currentShakeTime - lastShakeTime > shakeInterval) {
+                    lastShakeTime = currentShakeTime
+                    if (captionFlag) Toast.makeText(context, "연속 화면 해설이 중단 되었습니다.", Toast.LENGTH_SHORT).show()
+                    captionFlag = false
+
+                }
+            }
+        }
+    }
+
+    override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {
+        // Handle the change in the accuracy of the accelerometer sensor
     }
 
 }
