@@ -52,7 +52,7 @@ public class CaptionController {
     @GetMapping(path = "/{logId}")
     public ResponseEntity<CaptionDto> captionResult(@PathVariable("logId") String logId) {
         CaptionLog captionLog = captionLogService.findCaptionLogById(Long.parseLong(logId));
-        CaptionDto captionDto = new CaptionDto(captionLog.getContent());
+        CaptionDto captionDto = new CaptionDto(captionLog.getContent(), captionLog.getNames());
         return new ResponseEntity<>(captionDto, HttpStatus.OK);
     }
 }
