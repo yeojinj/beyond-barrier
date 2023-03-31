@@ -10,17 +10,18 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:focusable="false"
-        android:importantForAccessibility="no"
         android:orientation="vertical"
-        android:selectable="false"
         app:cardCornerRadius="10dp"
         app:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:strokeWidth="0dp">
+        app:strokeWidth="0dp"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:selectable="false"
+        >
 
         <TextView
             android:id="@+id/textView"
@@ -30,7 +31,11 @@
             android:gravity="center"
             android:text="프로그램 정보"
             android:textAlignment="center"
-            android:textSize="40sp" />
+            android:textSize="40sp"
+            android:focusable="false"
+            android:importantForAccessibility="no"
+            android:selectable="false"
+            />
 
     </com.google.android.material.card.MaterialCardView>
 
@@ -43,7 +48,11 @@
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/container"
-        tools:layout_editor_absoluteX="0dp" />
+        tools:layout_editor_absoluteX="0dp"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:selectable="false"
+        />
 
     <ImageView
         android:id="@+id/loadingImage"

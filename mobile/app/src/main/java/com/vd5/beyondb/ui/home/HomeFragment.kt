@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.accessibility.AccessibilityNodeInfo
 import android.view.animation.*
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -31,6 +32,10 @@ class HomeFragment : Fragment() {
             (activity as MainActivity).TTSrun(textView.text.toString())
         }, 200)
         val tutorialStartButton = _binding.buttonTutorial
+
+
+
+
         tutorialStartButton.setOnClickListener { tutorial() }
         return _binding.root
     }
@@ -56,7 +61,7 @@ class HomeFragment : Fragment() {
             // 완료 시점 마다 신호
             override fun onDone(utteranceId: String) {
                 Log.d(TAG, "onDone: TTS 완료!!!")
-                if (tutorialIndex < tutorialTexts.size) {
+                if (tutorialIndex < tutorialTexts.size -1 ) {
                     tutorialIndex++
                     setAnimatedText(textView, tutorialTexts[tutorialIndex])
                 } else {
@@ -67,7 +72,8 @@ class HomeFragment : Fragment() {
             }
         })
         setAnimatedText(textView, tutorialTexts[tutorialIndex])
-        button.visibility = View.INVISIBLE
+//        button.visibility = View.INVISIBLE
+        button.isEnabled = false
     }
 
     fun setAnimatedText(textView: TextView, newText: String) {

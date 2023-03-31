@@ -24,15 +24,13 @@
     </string-array>
 
     <string-array name="captioning_interval_entry">
-        <item>5초</item>
-        <item>7초</item>
-        <item>9초</item>
+        <item>no</item>
+        <item>yes</item>
     </string-array>
 
     <string-array name="captioning_interval_values">
-        <item>5</item>
-        <item>7</item>
-        <item>9</item>
+        <item>sss</item>
+        <item>yyy</item>
     </string-array>
 
 
