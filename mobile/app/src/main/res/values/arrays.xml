@@ -16,11 +16,17 @@
     <string-array name="captioning_lang_entry">
         <item>한글</item>
         <item>영어</item>
+        <item>일본어</item>
+        <item>중국어</item>
+        <item>불어</item>
     </string-array>
 
     <string-array name="captioning_lang_values">
         <item>ko</item>
         <item>en</item>
+        <item>ja</item>
+        <item>zh-CN</item>
+        <item>fr</item>
     </string-array>
 
     <string-array name="captioning_interval_entry">
