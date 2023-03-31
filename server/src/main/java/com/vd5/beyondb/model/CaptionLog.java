@@ -1,6 +1,8 @@
 package com.vd5.beyondb.model;
 
+import com.vd5.beyondb.utils.EmptyStringToNullConverter;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
@@ -29,13 +31,18 @@ public class CaptionLog {
     @Column(name = "content", length = 1000)
     private String content;
 
+    @Convert(converter = EmptyStringToNullConverter.class)
+    @Column(name = "names", length = 1000)
+    private String names;
+
     @CreatedDate
     @Column(name = "log_time")
     private LocalDateTime log_time;
 
     @Builder
-    public CaptionLog(String content) {
+    public CaptionLog(String content, String names) {
         this.content = content;
+        this.names = names;
     }
 
 }

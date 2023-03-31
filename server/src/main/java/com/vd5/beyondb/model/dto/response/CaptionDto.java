@@ -6,5 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CaptionDto {
+
     private String result;
+
+    private String names;
 }
