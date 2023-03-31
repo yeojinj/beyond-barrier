@@ -7,7 +7,7 @@
     tools:context=".ui.captioning.CaptioningFragment">
 
     <com.google.android.material.card.MaterialCardView
-        android:id="@+id/container"
+        android:id="@+id/title_container"
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:focusable="false"
@@ -20,7 +20,10 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:strokeWidth="0dp">
+        style="?attr/borderlessButtonStyle"
+        app:cardBackgroundColor="@color/background"
+        >
+
 
         <TextView
             android:id="@+id/textView"
@@ -34,27 +37,57 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-
-    <TextView
-        android:id="@+id/text_captioning"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/content_container"
+        style="@style/YourCardView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/container"
-        tools:layout_editor_absoluteX="0dp" />
-
-    <ImageView
-        android:id="@+id/loadingImage"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@drawable/loading"
+        android:layout_height="0dp"
+        android:layout_marginBottom="90dp"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:orientation="vertical"
+        android:selectable="false"
+        app:cardCornerRadius="10dp"
+        app:cardUseCompatPadding="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/container" />
+        app:layout_constraintTop_toBottomOf="@+id/title_container"
+        app:strokeWidth="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/text_captioning"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+
+            <ImageView
+                android:id="@+id/loadingImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/loading"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.google.android.material.card.MaterialCardView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
