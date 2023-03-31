@@ -10,9 +10,9 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:orientation="vertical"
         android:focusable="false"
         android:importantForAccessibility="no"
+        android:orientation="vertical"
         android:selectable="false"
         app:cardCornerRadius="10dp"
         app:cardUseCompatPadding="true"
@@ -31,11 +31,12 @@
             android:text="화면 해설"
             android:textAlignment="center"
             android:textSize="40sp" />
+
     </com.google.android.material.card.MaterialCardView>
 
 
     <TextView
-        android:id="@+id/text_notifications"
+        android:id="@+id/text_captioning"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAlignment="center"
@@ -44,16 +45,16 @@
         app:layout_constraintTop_toBottomOf="@+id/container"
         tools:layout_editor_absoluteX="0dp" />
 
-    <Button
-        android:id="@+id/button_notifications"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Caption"
+    <ImageView
+        android:id="@+id/loadingImage"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/loading"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/text_notifications"
-        app:layout_constraintVertical_bias="0.498" />
+        app:layout_constraintTop_toBottomOf="@+id/container" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
