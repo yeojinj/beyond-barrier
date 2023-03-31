@@ -16,8 +16,11 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.vd5.beyondb.MainActivity
+import com.vd5.beyondb.R
 import com.vd5.beyondb.databinding.FragmentProgramBinding
 import com.vd5.beyondb.service.BluetoothLeService
 import com.vd5.beyondb.util.Program
@@ -25,23 +28,24 @@ import com.vd5.beyondb.util.Program
 private const val TAG = "ProgramFragment"
 
 class ProgramFragment : Fragment() {
+    private var loadingImage = null
+    private var programText : TextView? = null
 
-
-    lateinit var _binding : FragmentProgramBinding
+    lateinit var binding : FragmentProgramBinding
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentProgramBinding.inflate(inflater,container,false)
+        binding = FragmentProgramBinding.inflate(inflater,container,false)
 
-        programText = _binding.textProgram
+        programText = binding.textProgram
         programText?.text = ""
 
-        programBtn = _binding.buttonProgram
-        programBtn?.isEnabled = false
-        programBtn?.text = "processing.."
+        Glide.with(this).load(R.drawable.loading).into(binding.loadingImage)
+        binding.loadingImage.isVisible = true
+
 
         if ((activity as MainActivity).connectionState == BluetoothAdapter.STATE_DISCONNECTED){
             (activity as MainActivity).scanLeDevice(true)
@@ -49,11 +53,10 @@ class ProgramFragment : Fragment() {
             (activity as MainActivity).programRequest()
         }
 
-        return _binding.root
+        return binding.root
     }
 
-    private var programBtn : Button? = null
-    private var programText : TextView? = null
+
 
 
 
@@ -70,24 +73,24 @@ class ProgramFragment : Fragment() {
 
                     (activity as MainActivity).TTSrun(programResult)
                     programText?.text = programResult
-                    programBtn?.text = "READY"
+                    binding.loadingImage.isVisible = false
                 }
                 BluetoothLeService.ACTION_REQUEST_FAIL -> {
                     Log.d(TAG, "onReceive: 로고 인식 실패 fragment에서 받음")
                     val message = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
                     programText?.text = message
                     (activity as MainActivity).TTSrun(message.toString())
-                    programBtn?.text = "READY"
+                    binding.loadingImage.isVisible = false
+
                 }
             }
         }
     }
 
-    fun programResult(program: Program){
+    fun programResult(program: Program): String {
         val result = "프로그램 이름은 ${program?.programName}입니다.\n ${program?.programContent} 입니다. "
 
-
-
+        return result
     }
 
 

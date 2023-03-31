@@ -14,8 +14,12 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.preference.PreferenceManager
+import com.bumptech.glide.Glide
 import com.vd5.beyondb.MainActivity
+import com.vd5.beyondb.R
 import com.vd5.beyondb.databinding.FragmentCaptioningBinding
 import com.vd5.beyondb.service.BluetoothLeService
 import com.vd5.beyondb.util.*
@@ -30,6 +34,9 @@ class CaptioningFragment : Fragment() {
     lateinit var binding : FragmentCaptioningBinding
 
     private val TAG = "captionFragment"
+    private var captioning_lang : String = "ko"
+
+
 
     // PAPAGO API
     val CLIENT_ID = "tQ1IC34NWA_W2eKoRO3p"
@@ -49,12 +56,14 @@ class CaptioningFragment : Fragment() {
     ): View {
         binding = FragmentCaptioningBinding.inflate(inflater,container,false)
 
-        notificationsBtn = binding.buttonNotifications
-        notificationText = binding.textNotifications
-
+        notificationText = binding.textCaptioning
         notificationText?.text = ""
-        notificationsBtn?.isEnabled = false
-        notificationsBtn?.text = "processing.."
+
+//        val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+//        captioning_lang = sharedPref.getString("captioning_lang_values", "ko").toString()
+
+        Glide.with(this).load(R.drawable.loading).into(binding.loadingImage)
+        binding.loadingImage.isVisible = true
 
 
         if ((activity as MainActivity).connectionState == BluetoothAdapter.STATE_DISCONNECTED){
@@ -71,13 +80,14 @@ class CaptioningFragment : Fragment() {
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
 
+
         override fun onReceive(context: Context, intent: Intent) {
             Log.d(TAG, "onReceive: " + intent.action)
             when (intent.action) {
                 BluetoothLeService.ACTION_GATT_CAPTIONING -> {
-                    Log.d(TAG, "onReceive: captionFragment에서의 caption결과 수신")
                     val caption = intent.getSerializableExtra("caption") as Caption
-                    Log.d(TAG, "onReceive: $caption")
+                    Log.d(TAG, "onReceive: captionFragment에서의 caption결과 수신 : $caption")
+
                     var captionResult = caption?.result!!
                     papagoService.transferPapago(CLIENT_ID,CLIENT_SECRET,"en","ko",captionResult)
                         .enqueue(object : Callback<ResultTransferPapago> {
@@ -87,7 +97,7 @@ class CaptioningFragment : Fragment() {
                                 Log.d("http", "papago api 통신 성공 : ${captionResult}")
                                 notificationText?.text = captionResult
                                 (activity as MainActivity).TTSrun(captionResult)
-                                notificationsBtn?.text = "READY"
+                                binding.loadingImage.isVisible = false
                             }
 
                             override fun onFailure(call: Call<ResultTransferPapago>, t: Throwable) {

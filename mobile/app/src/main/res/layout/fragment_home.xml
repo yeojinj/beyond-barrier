@@ -19,13 +19,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:selectable="false"
+        />
 
     <Button
         android:id="@+id/button_tutorial"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/button_tutorial"
+        android:hint="튜토리얼을 보려면 눌러주세요."
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

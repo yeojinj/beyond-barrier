@@ -34,11 +34,8 @@ class SettingsFragment :  PreferenceFragmentCompat() {
 
             // SharedPreferences 객체 초기화
             prefs = PreferenceManager.getDefaultSharedPreferences(this.requireContext())
-
         }
     }
-
-
 
     // 설정 변경 이벤트 처리
     private val prefListener =
@@ -47,15 +44,12 @@ class SettingsFragment :  PreferenceFragmentCompat() {
                 "tts_speed" -> {
                     val value = prefs.getString("tts_speed","1.0")
                     (activity as MainActivity).textToSpeech?.setSpeechRate(value!!.toFloat())
-                    Log.d("테스트","바뀜 : " + value)
                 }
                 "font_size" -> {
                     val value = prefs.getString("font_size","14")
-                    Log.d("테스트","바뀜 : " + value)
                 }
                 "captioning_interval" -> {
                     val value = prefs.getString("captioning_interval","7")
-                    Log.d("테스트","바뀜 : " + value)
                 }
             }
         }
