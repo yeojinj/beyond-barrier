@@ -433,7 +433,11 @@ namespace BeyondBarrier
             {
                 //스크린 캡쳐함수
                 //사용 목적: 안드로이드로부터 요청이 왔을 시, 이미지 파일 저장
-                //
+                //매개변수: string, 확장자와 경로 제외한 파일명
+                //사진 파일 이름 형식: "capture" / "programInfo" 가 들어가게 될 예정
+                //사진 파일 확장자: .jpg (바꾸셔도 됩니다.)
+                //사진 파일 저장 위치: 앱 설치 위치 내부의 /res/savedPics/
+
                 //capture 라면 /opt/usr/globalapps/org.tizen.example.BeyondBarrier/res/savedPics/capture.jpg
                 //programInfo 라면 /opt/usr/globalapps/org.tizen.example.BeyondBarrier/res/savedPics/programInfo.jpg
                 //를 저장하려 합니다.
