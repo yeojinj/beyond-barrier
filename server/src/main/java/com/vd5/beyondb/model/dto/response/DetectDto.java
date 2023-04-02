@@ -10,6 +10,7 @@ public class DetectDto {
 
     private int programId;
     private String programName;
+    private String programLogoImg;
     private String programContent;
     private List<String> programCasting;
 }

@@ -71,7 +71,7 @@ public class ProgramController {
         for (Casting c : castingList) {
             programCasting.add(c.getCast_name());
         }
-        DetectDto detectDto = new DetectDto(program.getId(), program.getName(),
+        DetectDto detectDto = new DetectDto(program.getId(), program.getName(), program.getImgPath(),
             program.getContent(), programCasting);
         return new ResponseEntity<>(detectDto, HttpStatus.OK);
     }
