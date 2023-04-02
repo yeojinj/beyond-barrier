@@ -36,7 +36,7 @@ class ProgramFragment : Fragment() {
     ): View {
         binding = FragmentProgramBinding.inflate(inflater,container,false)
 
-        programText = binding.textProgram
+        programText = binding.programResult
         programText?.text = ""
 
         Glide.with(this).load(R.drawable.loading).into(binding.loadingImage)

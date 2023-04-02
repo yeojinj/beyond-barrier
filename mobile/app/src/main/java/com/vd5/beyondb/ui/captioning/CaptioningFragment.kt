@@ -73,7 +73,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
         sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
-        notificationText = binding.textCaptioning
+        notificationText = binding.captioningResult
         notificationText?.text = ""
 
         captioning_lang = preferences.getString("captioning_lang", "ko").toString()
