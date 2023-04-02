@@ -76,7 +76,7 @@ public class ProgramController {
         return new ResponseEntity<>(detectDto, HttpStatus.OK);
     }
 
-    @Scheduled(cron = "0 25 11 29 * ?", zone = "Asia/Seoul")     // 한국 시간으로 매달 29일 11시 25분마다 크롤링
+    @Scheduled(cron = "0 20 19 31 * ?", zone = "Asia/Seoul")     // 한국 시간으로 매달 31일 19시 20분마다 크롤링
     public String crawlingProgram() {
         log.info("===== crawlingProgram() =====");
         List<Program> programList = programService.getProgramList();
