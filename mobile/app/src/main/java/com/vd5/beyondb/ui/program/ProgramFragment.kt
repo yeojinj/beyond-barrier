@@ -105,9 +105,10 @@ class ProgramFragment : Fragment() {
             var names = ""
             for (i in program.programCasting.indices) {
                 if (i > 4) break
-                names += (program.programCasting[i] + " ")
+                names += (program.programCasting[i] + ", ")
             }
-            result += "주요 출연진은 $names 입니다."
+            names = names.dropLast(2)
+            result += "주요 출연진은 $names 이 있습니다."
         }
         return result
     }
