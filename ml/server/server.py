@@ -25,7 +25,7 @@ from tqdm import tqdm, trange
 
 
 ##### GPU Server 모델 설정
-logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='server/yolov5l_custom.pt', _verbose=False)
+logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='/home/jupyter-j8s0051/server/yolov5l_custom.pt', _verbose=False)
 logo_model.cuda()
 
 def logodetect(img):
@@ -340,7 +340,7 @@ def inference(img):
 
 
 # Get files
-files = os.listdir('server/static/database')
+files = os.listdir('/home/jupyter-j8s0051/server/static/database')
 
 # Declare lists
 known_face_encodings = []
@@ -360,7 +360,7 @@ known_face_names.clear()
 #         name, number = name_include_number.split('_')
         
 #         # load image file to recognize face
-#         image = face_recognition.load_image_file('server/static/database/' + file)
+#         image = face_recognition.load_image_file('/home/jupyter-j8s0051/server/static/database/' + file)
         
 #         # handle Exception
 #         if(len(face_recognition.face_encodings(image)) == 0): continue
@@ -379,8 +379,8 @@ known_face_names.clear()
 #         known_face_names.append(name)
         
 # Load Pre-studied ndarray
-known_face_encodings = np.load('server/known_face_encodings.npy')
-known_face_names = np.load('server/known_face_names.npy')
+known_face_encodings = np.load('/home/jupyter-j8s0051/server/known_face_encodings.npy')
+known_face_names = np.load('/home/jupyter-j8s0051/server/known_face_names.npy')
         
 # Check the number of learning
 print('Learned encoding for', len(known_face_encodings), 'images with', len(known_face_names), 'names.')
@@ -393,22 +393,22 @@ def facerecog(url):
     
     # Fail to download image
     # r = requests.get(url)
-    # with open('server/static/facerecog/test.jpg', 'wb') as outfile:
+    # with open('/home/jupyter-j8s0051/server/static/facerecog/test.jpg', 'wb') as outfile:
     #     outfile.write(r.content)
     
     
     # 403 ERROR
     # opener = urllib.request.URLopener()
     # opener.addheader('User-Agent', 'Mozilla/5.0')
-    # opener.retrieve(url, 'server/static/facerecog/test.jpg')
+    # opener.retrieve(url, '/home/jupyter-j8s0051/server/static/facerecog/test.jpg')
     
     # 403 ERROR
-    # urllib.request.urlretrieve(url, 'server/static/facerecog/test.jpg')
+    # urllib.request.urlretrieve(url, '/home/jupyter-j8s0051/server/static/facerecog/test.jpg')
     
     # Load an image with an unknown face
     
     # Fix
-    # unknown_image = face_recognition.load_image_file('server/static/facerecog/test.jpg')
+    # unknown_image = face_recognition.load_image_file('/home/jupyter-j8s0051/server/static/facerecog/test.jpg')
     
     # read error
     # im = PIL.Image.open(requests.get(url, stream=True).raw)
@@ -467,8 +467,8 @@ def main():
 #     if (request.method == 'POST'):
 #         f = request.files['file']
         
-#         f.save('server/static/facerecog' + f.filename)
-#         result = facerecog('server/static/facerecog' + f.filename)
+#         f.save('/home/jupyter-j8s0051/server/static/facerecog' + f.filename)
+#         result = facerecog('/home/jupyter-j8s0051/server/static/facerecog' + f.filename)
         
 #         return result
     
@@ -478,8 +478,8 @@ def main():
 def image_caption():
     if (request.method == 'POST'):
         f = request.files['file']
-        f.save('server/static/imagecaption/' + f.filename)
-        result = inference('server/static/imagecaption/' + f.filename)
+        f.save('/home/jupyter-j8s0051/server/static/imagecaption/' + f.filename)
+        result = inference('/home/jupyter-j8s0051/server/static/imagecaption/' + f.filename)
         
         return result
     
@@ -488,8 +488,8 @@ def image_caption():
 def logo_detect():
     if (request.method == 'POST'):
         f = request.files['file']
-        f.save('server/static/logodetect' + f.filename)
-        result = logodetect('server/static/logodetect' + f.filename)
+        f.save('/home/jupyter-j8s0051/server/static/logodetect' + f.filename)
+        result = logodetect('/home/jupyter-j8s0051/server/static/logodetect' + f.filename)
         
         return result
     
