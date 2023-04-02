@@ -1,6 +1,7 @@
 package com.vd5.beyondb
 
 import android.Manifest
+import android.accessibilityservice.AccessibilityServiceInfo
 import android.annotation.SuppressLint
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothAdapter.*
@@ -334,7 +335,9 @@ class MainActivity : AppCompatActivity() {
 
     fun TTSrun(string: String, utteranceId: String) {
         val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
-        if (am.isTouchExplorationEnabled) {
+        val enabledServices = am.getEnabledAccessibilityServiceList(AccessibilityServiceInfo.FEEDBACK_SPOKEN)
+
+        if (enabledServices.isNotEmpty()) {
             am.interrupt()
         }
         textToSpeech?.speak(string, TextToSpeech.QUEUE_FLUSH, null, utteranceId)
