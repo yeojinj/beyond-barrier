@@ -20,6 +20,8 @@ data class Program(
     val programContent: String,
     @SerializedName("programCasting")
     val programCasting: List<String>,
+    @SerializedName("programLogoImg")
+    val programLogoImg: String,
 ) : Serializable
 
 
