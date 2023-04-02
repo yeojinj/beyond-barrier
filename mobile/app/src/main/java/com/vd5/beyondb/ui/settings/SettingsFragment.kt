@@ -29,7 +29,7 @@ class SettingsFragment :  Fragment() {
         if (savedInstanceState == null) {
             val preferenceFragment = PreferenceList()
             val ft = requireActivity().supportFragmentManager.beginTransaction()
-            ft.add(R.id.preferenceContainer, preferenceFragment)
+            ft.add(R.id.setting_list, preferenceFragment)
             ft.commit()
         }
 
@@ -51,12 +51,6 @@ class SettingsFragment :  Fragment() {
                     "tts_speed" -> {
                         val value = prefs.getString("tts_speed","1.0")
                         (activity as MainActivity).textToSpeech?.setSpeechRate(value!!.toFloat())
-                    }
-                    "font_size" -> {
-                        val value = prefs.getString("font_size","14")
-                    }
-                    "captioning_interval" -> {
-                        val value = prefs.getString("captioning_interval","7")
                     }
                 }
             }
