@@ -1,13 +1,16 @@
 from flask import *
 import os
 
-
-######################## SELECT #######################
 # Select GPU Device
-os.environ["CUDA_VISIBLE_DEVICES"] = '8'
-#######################################################
+os.environ["CUDA_VISIBLE_DEVICES"] = '7'
 
-
+import requests
+import os.path
+import face_recognition
+import numpy as np
+import skimage.io as io
+import PIL.Image
+import urllib.request
 from huggingface_hub import hf_hub_download
 coco_weight = hf_hub_download(repo_id="akhaliq/CLIP-prefix-captioning-COCO-weights", filename="coco_weights.pt")
 import clip
@@ -19,22 +22,10 @@ import sys
 from typing import Tuple, List, Union, Optional
 from transformers import GPT2Tokenizer, GPT2LMHeadModel, AdamW, get_linear_schedule_with_warmup
 from tqdm import tqdm, trange
-import skimage.io as io
-import PIL.Image
 
 
-##### logo_detection start
-
-######################## SELECT #######################
-
-##### (1) GPU Server 모델 설정
+##### GPU Server 모델 설정
 logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='server/best.pt', _verbose=False)
-
-##### (2) Local Server 모델 설정
-# logo_model = torch.hub.load('ultralytics/yolov5', 'custom', path='./best.pt', _verbose=False)
-
-#######################################################
-
 logo_model.cuda()
 
 def logodetect(img):
@@ -345,35 +336,149 @@ def inference(img):
         generated_text_prefix = generate2(model, tokenizer, embed=prefix_embed)
     return generated_text_prefix
 
-# file_path = sys.argv[1]
-# file_path = "elephant.png"
-# print(inference(file_path))
 
+# Get files
+files = os.listdir('server/static/database')
+
+# Declare lists
+known_face_encodings = []
+known_face_names = []
+
+# Clear lists
+known_face_encodings.clear()
+known_face_names.clear()
+
+# Extract characteristics from database files
+# for file in files:
+#     if (not file.startswith('.')):
+#         # obama_1.jpg => obama_1, jpg
+#         name_include_number, ext = file.split('.')
+        
+#         # obama_1 => obama, 1
+#         name, number = name_include_number.split('_')
+        
+#         # load image file to recognize face
+#         image = face_recognition.load_image_file('server/static/database/' + file)
+        
+#         # handle Exception
+#         if(len(face_recognition.face_encodings(image)) == 0): continue
+        
+#         print("Learning faces...")
+        
+#         known_face_encodings.append(face_recognition.face_encodings(image)[0])
+        
+#         # encode the image
+# #         globals()["{}_image_encoding_{}".format(name, number)] = face_recognition.face_encodings(image)[0]
+        
+#         # append the encoded info into the list
+# #         known_face_encodings.append(globals()["{}_image_encoding_{}".format(name, number)])
+        
+#         # append the name into the list
+#         known_face_names.append(name)
+        
+# Load Pre-studied ndarray
+known_face_encodings = np.load('server/known_face_encodings.npy')
+known_face_names = np.load('server/known_face_names.npy')
+        
+# Check the number of learning
+print('Learned encoding for', len(known_face_encodings), 'images with', len(known_face_names), 'names.')
+
+
+
+
+# Face recognition
+def facerecog(url):
+    
+    # Fail to download image
+    # r = requests.get(url)
+    # with open('server/static/facerecog/test.jpg', 'wb') as outfile:
+    #     outfile.write(r.content)
+    
+    
+    # 403 ERROR
+    # opener = urllib.request.URLopener()
+    # opener.addheader('User-Agent', 'Mozilla/5.0')
+    # opener.retrieve(url, 'server/static/facerecog/test.jpg')
+    
+    # 403 ERROR
+    # urllib.request.urlretrieve(url, 'server/static/facerecog/test.jpg')
+    
+    # Load an image with an unknown face
+    
+    # Fix
+    # unknown_image = face_recognition.load_image_file('server/static/facerecog/test.jpg')
+    
+    # read error
+    # im = PIL.Image.open(requests.get(url, stream=True).raw)
+    # unknown_image = face_recognition.load_image_file(im)
+    
+    
+    
+    # S3가 urllib이 크롤러인 줄 알고 response을 blocking 하기 때문에 오류가 발생, 헤더를 추가하자
+    req = urllib.request.Request(url, headers={'User-Agent' : 'Mozilla/5.0'})
+    response = urllib.request.urlopen(req)
+    unknown_image = face_recognition.load_image_file(response)
+    
+    
+    # Store the result of face recognition
+    result = []
+    result.clear()
+    
+    # Find all the faces and face encodings in the unknown image
+    
+    # Adopt cnn
+    # face_locations = face_recognition.face_locations(unknown_image, model="cnn") 
+    
+    face_locations = face_recognition.face_locations(unknown_image) 
+    face_encodings = face_recognition.face_encodings(unknown_image, face_locations)
+    
+    # Loop through each face found in the unknown image
+    for (top, right, bottom, left), face_encoding in zip(face_locations, face_encodings):
+
+        matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=0.35)
+
+        name = "Unknown"
+
+        face_distances = face_recognition.face_distance(known_face_encodings, face_encoding)
+
+        best_match_index = np.argmin(face_distances)
+
+        if matches[best_match_index]:
+            name = known_face_names[best_match_index]
+
+        if (name != "Unknown"):
+            result.append(name)
+     
+    return jsonify({ "names": list(set(result)) })
+
+# Server
 app = Flask(__name__)
 
 
-@app.route("/")
-def hello():
-    return "Hello Flask"
+@app.route('/')
+def main():
+    return "Hello BeyondB"
 
 
+# @app.route('/facerecog', methods=['POST'])
+# def face_recog():
+#     if (request.method == 'POST'):
+#         f = request.files['file']
+        
+#         f.save('server/static/facerecog' + f.filename)
+#         result = facerecog('server/static/facerecog' + f.filename)
+        
+#         return result
+    
+        
 # upload an image file
 @app.route("/imagecaption", methods=['POST'])
 def image_caption():
     if (request.method == 'POST'):
         f = request.files['file']
-        
-        ######################## SELECT #######################
-        
-        ##### (1) GPU Server 폴더 구조
         f.save('server/static/imagecaption/' + f.filename)
         result = inference('server/static/imagecaption/' + f.filename)
         
-        ##### (2) Local Server 폴더 구조
-#         f.save('./static/imagecaption/' + f.filename)
-#         result = inference('./static/imagecaption/' + f.filename)
-        
-        #######################################################
         return result
     
     
@@ -381,18 +486,9 @@ def image_caption():
 def logo_detect():
     if (request.method == 'POST'):
         f = request.files['file']
-        
-        ######################## SELECT #######################
-        
-        ##### (1) GPU Server 폴더 구조
         f.save('server/static/logodetect' + f.filename)
         result = logodetect('server/static/logodetect' + f.filename)
         
-        ##### (2) Local Server 폴더 구조
-#         f.save('./static/logodetect/' + f.filename)
-#         result = logodetect('./static/logodetect/' + f.filename)
-        
-        #######################################################
         return result
     
     
@@ -427,13 +523,17 @@ def s3_logo_detection():
     return result
 
 
-# run was
-######################## SELECT #######################
+@app.route('/s3/facerecog', methods=['POST'])
+def s3_face_recog():
+    req = request.json
+    
+    address = req['address']
+    result = facerecog(address)
+    
+    return result
 
-##### (1) GPU Server
+
+# run was
+##### GPU Server
 app.run(host='70.12.130.121', port='5000', debug=True)
 
-##### (2) Local Server
-# app.run(port='5000', debug=True)
-
-#######################################################
