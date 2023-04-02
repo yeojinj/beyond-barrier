@@ -35,14 +35,18 @@ public class CaptionLog {
     @Column(name = "names", length = 1000)
     private String names;
 
+    @Column(name = "img_path", length = 200)
+    private String imgPath;
+
     @CreatedDate
     @Column(name = "log_time")
     private LocalDateTime log_time;
 
     @Builder
-    public CaptionLog(String content, String names) {
+    public CaptionLog(String content, String names, String imgPath) {
         this.content = content;
         this.names = names;
+        this.imgPath = imgPath;
     }
 
 }
