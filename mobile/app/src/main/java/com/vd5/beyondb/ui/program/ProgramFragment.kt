@@ -66,6 +66,9 @@ class ProgramFragment : Fragment() {
                     Log.d(TAG, "onReceive: 프로그램 결과 수신 : $program")
                     programText?.text = program.programName
 
+                    val logoView = binding.imageLogo
+                    Glide.with(requireActivity()).load(program.programLogoImg).override(1000).into(logoView)
+
                     val programResult = programResult(program)
 
                     (activity as MainActivity).TTSrun(programResult)
