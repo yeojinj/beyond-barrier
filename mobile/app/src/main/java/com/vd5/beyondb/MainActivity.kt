@@ -18,6 +18,7 @@ import android.os.IBinder
 import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.util.Log
+import android.view.accessibility.AccessibilityManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -332,6 +333,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun TTSrun(string: String, utteranceId: String) {
+        val am = getSystemService(Context.ACCESSIBILITY_SERVICE) as AccessibilityManager
+        if (am.isTouchExplorationEnabled) {
+            am.interrupt()
+        }
         textToSpeech?.speak(string, TextToSpeech.QUEUE_FLUSH, null, utteranceId)
         textToSpeech?.playSilentUtterance(750, TextToSpeech.QUEUE_ADD,null) // deley시간 설정
     }
