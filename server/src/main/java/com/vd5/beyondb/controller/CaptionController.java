@@ -45,14 +45,14 @@ public class CaptionController {
             recognizeResultStr.append(str).append(", ");
         }
         Long logId = captionLogService.addCaptionLog(captionResult,
-            String.valueOf(recognizeResultStr));
+            String.valueOf(recognizeResultStr), captureDto.getImgPath());
         return Long.toString(logId);
     }
 
     @GetMapping(path = "/{logId}")
     public ResponseEntity<CaptionDto> captionResult(@PathVariable("logId") String logId) {
         CaptionLog captionLog = captionLogService.findCaptionLogById(Long.parseLong(logId));
-        CaptionDto captionDto = new CaptionDto(captionLog.getContent(), captionLog.getNames());
+        CaptionDto captionDto = new CaptionDto(captionLog.getContent(), captionLog.getNames(), captionLog.getImgPath());
         return new ResponseEntity<>(captionDto, HttpStatus.OK);
     }
 }

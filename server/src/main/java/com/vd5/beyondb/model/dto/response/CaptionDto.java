@@ -10,4 +10,6 @@ public class CaptionDto {
     private String result;
 
     private String names;
+
+    private String imgPath;
 }

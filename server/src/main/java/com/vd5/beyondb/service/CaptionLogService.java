@@ -13,9 +13,9 @@ public class CaptionLogService {
     @Autowired
     private CaptionLogRepository captionLogRepository;
 
-    public Long addCaptionLog(String content, String names) {
+    public Long addCaptionLog(String content, String names, String imgPath) {
         CaptionLog captionLog = CaptionLog.builder()
-            .content(content).names(names).build();
+            .content(content).names(names).imgPath(imgPath).build();
         captionLogRepository.save(captionLog);
         return captionLog.getId();
     }
