@@ -18,6 +18,9 @@ public class Program {
     @Column(name = "content", length = 1000)
     private String content;
 
+    @Column(name = "img_path", length = 200)
+    private String imgPath;
+
     public void updateContent(String content) {
         this.content = content;
     }
