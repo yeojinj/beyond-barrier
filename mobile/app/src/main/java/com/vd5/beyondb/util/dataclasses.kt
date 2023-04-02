@@ -40,6 +40,8 @@ data class Caption(
     val result: String,
     @SerializedName("names")
     val names: String,
+    @SerializedName("imgPath")
+    val imgPath: String,
 ) : Serializable
 
 // papago data class

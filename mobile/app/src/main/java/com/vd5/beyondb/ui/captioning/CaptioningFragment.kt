@@ -15,6 +15,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
@@ -125,6 +126,8 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                 BluetoothLeService.ACTION_GATT_CAPTIONING -> {
                     val caption = intent.getSerializableExtra("caption") as Caption
                     Log.d(TAG, "onReceive: captionFragment에서의 caption결과 수신 : $caption")
+                    val captureView: ImageView = binding.captureView
+                    Glide.with(requireActivity()).load(caption.imgPath).override(1000).into(captureView)
                     var captionResult = caption.result
                     if (captioning_lang != "en") {
                         papagoService.transferPapago(
