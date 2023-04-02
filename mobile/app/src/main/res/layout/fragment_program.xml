@@ -46,10 +46,11 @@
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageLogo"
-                app:layout_constraintVertical_bias="0.331" />
+                app:layout_constraintVertical_bias="0.443" />
 
             <ImageView
                 android:id="@+id/loadingImage"
+                android:contentDescription="@string/loading_description"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/loading"
@@ -64,7 +65,8 @@
                 android:id="@+id/imageLogo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="100dp"
+                android:layout_marginTop="40dp"
+                android:contentDescription="@string/program_logo"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"

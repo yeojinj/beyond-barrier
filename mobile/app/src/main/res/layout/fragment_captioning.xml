@@ -39,21 +39,20 @@
                 android:id="@+id/captioning_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="105dp"
+                android:layout_marginBottom="60dp"
                 android:textAlignment="center"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/captureView"
-                app:layout_constraintVertical_bias="0.178" />
+                app:layout_constraintStart_toStartOf="parent" />
 
             <ImageView
                 android:id="@+id/loadingImage"
                 android:layout_width="100dp"
                 android:layout_height="100dp"
                 android:src="@drawable/loading"
+                android:contentDescription="@string/loading_description"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -66,6 +65,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="50dp"
+                android:contentDescription="@string/capture_image"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
