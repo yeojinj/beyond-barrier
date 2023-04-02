@@ -42,7 +42,7 @@ public class CaptionController {
         List<String> namesList = recognizeResult.getNames();
         StringBuffer recognizeResultStr = new StringBuffer();
         for (String str : namesList) {
-            recognizeResultStr.append(str);
+            recognizeResultStr.append(str).append(", ");
         }
         Long logId = captionLogService.addCaptionLog(captionResult,
             String.valueOf(recognizeResultStr));
