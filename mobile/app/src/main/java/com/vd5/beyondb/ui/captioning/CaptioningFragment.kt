@@ -141,7 +141,11 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                                 ) {
                                     captionResult =
                                         response.body()?.message?.result?.translatedText.toString()
-                                    Log.d("http", "papago api 통신 성공 : ${captionResult}")
+                                    Log.d("http", "papago api 통신 성공 : $captionResult")
+                                    val names = caption.names
+                                    if (captioning_lang == "ko" && names != "") {
+                                        captionResult += "\n\n 현재 화면에 보이는 인물은 $names 입니다."
+                                    }
                                     notificationText?.text = captionResult
                                     (activity as MainActivity).TTSrun(captionResult, "captioning")
                                     binding.loadingImage.isVisible = false

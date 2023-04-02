@@ -36,6 +36,8 @@ data class CaptionRequest(
 data class Caption(
     @SerializedName("result")
     val result: String,
+    @SerializedName("names")
+    val names: String,
 ) : Serializable
 
 // papago data class
