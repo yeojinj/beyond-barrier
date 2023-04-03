@@ -236,18 +236,19 @@ class MainActivity : AppCompatActivity() {
         if (gattServices == null) return
         gattServices.forEach { gattService ->
             Log.d(TAG, "accessGattServices: service UUID ${gattService?.uuid}")
-            var serviceUuid: String = gattService?.uuid.toString()
+            val serviceUuid: String = gattService?.uuid.toString()
             if (serviceUuid == SERVICE_UUID) {
                 beyondService = gattService
                 Log.d(TAG, "captionService: ${beyondService?.uuid}")
                 beyondService?.characteristics?.forEach { gattCharacteristic ->
                     Log.d(TAG, "accessGattServices: ${gattCharacteristic.uuid}")
-                    var characteristicUuid: String = gattCharacteristic.uuid.toString()
+                    val characteristicUuid: String = gattCharacteristic.uuid.toString()
                     if (characteristicUuid == UUID_CAPTION_REQUEST) captionRequestCharacteristic = gattCharacteristic
                     else if (characteristicUuid == UUID_CAPTION_RESULT) captionResultCharacteristic = gattCharacteristic
                     else if (characteristicUuid == UUID_PROGRAM_REQUEST) programRequestCharacteristic = gattCharacteristic
                     else if (characteristicUuid == UUID_PROGRAM_RESULT) programResultCharacteristic = gattCharacteristic
                 }
+                Toast.makeText(this, "TV와 연결되었습니다.", Toast.LENGTH_SHORT).show()
             }
         }
     }

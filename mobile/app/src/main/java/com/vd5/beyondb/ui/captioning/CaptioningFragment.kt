@@ -10,6 +10,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
@@ -191,6 +192,12 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                         binding.loadingImage.isVisible = false
                     }
                 }
+                BluetoothLeService.ACTION_GATT_CAPTIONING_FAIL -> {
+                    val failMessage = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
+                    notificationText?.text = failMessage
+                    (activity as MainActivity).TTSrun(failMessage!!, "captioning")
+                    binding.loadingImage.isVisible = false
+                }
             }
         }
     }
@@ -214,6 +221,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
     private fun makeGattUpdateIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(BluetoothLeService.ACTION_GATT_CAPTIONING)
+            addAction(BluetoothLeService.ACTION_GATT_CAPTIONING_FAIL)
         }
     }
 
