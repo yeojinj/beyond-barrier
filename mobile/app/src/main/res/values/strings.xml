@@ -8,5 +8,8 @@
     <string name="default_tutorial">튜토리얼을 보려면 아래 버튼을 눌러주세요.</string>
     <string name="button_tutorial">튜토리얼 시작</string>
     <string name="setting_title">설정</string>
+    <string name="loading_description">로딩 중</string>
+    <string name="capture_image">캡쳐된 화면</string>
+    <string name="program_logo">프로그램 로고 이미지</string>
 
 </resources>

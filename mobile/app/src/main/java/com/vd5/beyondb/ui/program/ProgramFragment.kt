@@ -6,18 +6,18 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.drawable.Drawable
 import android.nfc.NfcAdapter
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.bumptech.glide.Glide
 import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.R
@@ -28,7 +28,6 @@ import com.vd5.beyondb.util.Program
 private const val TAG = "ProgramFragment"
 
 class ProgramFragment : Fragment() {
-    private var loadingImage = null
     private var programText : TextView? = null
 
     lateinit var binding : FragmentProgramBinding
@@ -43,8 +42,17 @@ class ProgramFragment : Fragment() {
         programText = binding.programResult
         programText?.text = ""
 
-        Glide.with(this).load(R.drawable.loading).into(binding.loadingImage)
-        binding.loadingImage.isVisible = true
+        val loadingImage = binding.loadingImage
+        val animated = AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.progress_bar)
+        animated?.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
+            override fun onAnimationEnd(drawable: Drawable?) {
+                loadingImage.post { animated.start() }
+            }
+
+        })
+        loadingImage.setImageDrawable(animated)
+        animated?.start()
+        loadingImage.isVisible = true
 
 
         if ((activity as MainActivity).connectionState == BluetoothAdapter.STATE_DISCONNECTED){
@@ -68,11 +76,14 @@ class ProgramFragment : Fragment() {
                 BluetoothLeService.ACTION_GATT_PROGRAM -> {
                     val program = intent.getSerializableExtra("program") as Program
                     Log.d(TAG, "onReceive: 프로그램 결과 수신 : $program")
+                    programText?.text = program.programName
 
-                    var programResult = programResult(program).toString()
+                    val logoView = binding.imageLogo
+                    Glide.with(requireActivity()).load(program.programLogoImg).override(1000).into(logoView)
+
+                    val programResult = programResult(program)
 
                     (activity as MainActivity).TTSrun(programResult)
-                    programText?.text = programResult
                     binding.loadingImage.isVisible = false
                 }
                 BluetoothLeService.ACTION_REQUEST_FAIL -> {
@@ -88,8 +99,17 @@ class ProgramFragment : Fragment() {
     }
 
     fun programResult(program: Program): String {
-        val result = "프로그램 이름은 ${program?.programName}입니다.\n ${program?.programContent} 입니다. "
-
+        var result = "프로그램 이름은 ${program.programName}입니다.\n\n" +
+                "${program.programContent} 입니다. "
+        if (program.programCasting.isNotEmpty()) {
+            var names = ""
+            for (i in program.programCasting.indices) {
+                if (i > 4) break
+                names += (program.programCasting[i] + ", ")
+            }
+            names = names.dropLast(2)
+            result += "주요 출연진은 $names 이 있습니다."
+        }
         return result
     }
 

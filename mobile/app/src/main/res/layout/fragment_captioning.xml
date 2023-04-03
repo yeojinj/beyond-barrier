@@ -39,8 +39,20 @@
                 android:id="@+id/captioning_result"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="75dp"
                 android:textAlignment="center"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <ImageView
+                android:id="@+id/loadingImage"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/progress_bar"
+                android:contentDescription="@string/loading_description"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -49,16 +61,15 @@
                 app:layout_constraintVertical_bias="0.5" />
 
             <ImageView
-                android:id="@+id/loadingImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/loading"
-                app:layout_constraintBottom_toBottomOf="parent"
+                android:id="@+id/captureView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:contentDescription="@string/capture_image"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_bias="0.498"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.5" />
+                app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 

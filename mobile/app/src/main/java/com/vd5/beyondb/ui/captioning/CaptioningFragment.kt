@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.drawable.Drawable
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
@@ -15,12 +16,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import androidx.preference.PreferenceManager
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
+import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import com.vd5.beyondb.MainActivity
 import com.vd5.beyondb.R
 import com.vd5.beyondb.databinding.FragmentCaptioningBinding
@@ -32,6 +36,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.Math.sqrt
+import java.util.*
 
 class CaptioningFragment : Fragment(), SensorEventListener {
 
@@ -75,12 +80,43 @@ class CaptioningFragment : Fragment(), SensorEventListener {
         notificationText = binding.captioningResult
         notificationText?.text = ""
 
-//        val sharedPref = PreferenceManager.getDefaultSharedPreferences(requireContext())
-//        captioning_lang = sharedPref.getString("captioning_lang_values", "ko").toString()
+        captioning_lang = preferences.getString("captioning_lang", "ko").toString()
+        Log.d(TAG, "onCreateView: ${(activity as MainActivity).textToSpeech!!.availableLanguages}")
+        when (captioning_lang) {
+            "ko" -> (activity as MainActivity).textToSpeech!!.language = Locale.KOREAN
+            "en" -> (activity as MainActivity).textToSpeech!!.language = Locale.ENGLISH
+            "ja" -> (activity as MainActivity).textToSpeech!!.language = Locale.JAPAN
+            "zh-CN" -> (activity as MainActivity).textToSpeech!!.language = Locale.CHINA
+            "fr" -> (activity as MainActivity).textToSpeech!!.language = Locale.FRANCE
+        }
 
-        Glide.with(this).load(R.drawable.loading).into(binding.loadingImage)
-        binding.loadingImage.isVisible = true
+        val loadingImage = binding.loadingImage
+        val animated = AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.progress_bar)
+        animated?.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
+            override fun onAnimationEnd(drawable: Drawable?) {
+                loadingImage.post { animated.start() }
+            }
 
+        })
+        loadingImage.setImageDrawable(animated)
+        animated?.start()
+        loadingImage.isVisible = true
+
+        (activity as MainActivity).textToSpeech!!.setOnUtteranceProgressListener(
+            object : UtteranceProgressListener() {
+                override fun onStart(p0: String?) {
+                }
+
+                // 완료 시점 마다 신호
+                override fun onDone(utteranceId: String) {
+                    if (captionFlag) {
+                        (activity as MainActivity).captioningRequest()
+                    }
+                }
+
+                override fun onError(p0: String?) {
+                }
+            })
 
         if ((activity as MainActivity).connectionState == BluetoothAdapter.STATE_DISCONNECTED){
             (activity as MainActivity).scanLeDevice(true)
@@ -103,34 +139,47 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                     val caption = intent.getSerializableExtra("caption") as Caption
                     Log.d(TAG, "onReceive: captionFragment에서의 caption결과 수신 : $caption")
                     var captionResult = caption.result
-                    papagoService.transferPapago(CLIENT_ID,CLIENT_SECRET,"en","ko",captionResult)
-                        .enqueue(object : Callback<ResultTransferPapago> {
-                            override fun onResponse(call: Call<ResultTransferPapago>, response: Response<ResultTransferPapago>
-                            ) {
-                                captionResult = response.body()?.message?.result?.translatedText.toString()
-                                Log.d("http", "papago api 통신 성공 : ${captionResult}")
-                                notificationText?.text = captionResult
-                                Log.d(TAG, "onResponse: captionFlag == $captionFlag")
-                                (activity as MainActivity).textToSpeech!!.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                                    override fun onStart(p0: String?) {
+                    if (captioning_lang != "en") {
+                        papagoService.transferPapago(
+                            CLIENT_ID,
+                            CLIENT_SECRET,
+                            "en",
+                            captioning_lang,
+                            captionResult
+                        )
+                            .enqueue(object : Callback<ResultTransferPapago> {
+                                override fun onResponse(
+                                    call: Call<ResultTransferPapago>,
+                                    response: Response<ResultTransferPapago>
+                                ) {
+                                    captionResult =
+                                        response.body()?.message?.result?.translatedText.toString()
+                                    Log.d("http", "papago api 통신 성공 : $captionResult")
+                                    val names = caption.names
+                                    if (captioning_lang == "ko" && names != "") {
+                                        captionResult += "\n\n 현재 화면에 보이는 인물은 ${names.dropLast(2)}입니다."
                                     }
-                                    // 완료 시점 마다 신호
-                                    override fun onDone(utteranceId: String) {
-                                        if (captionFlag) {
-                                            (activity as MainActivity).captioningRequest()
-                                        }
-                                    }
-                                    override fun onError(p0: String?) {
-                                    }
-                                })
-                                (activity as MainActivity).TTSrun(captionResult, "captioning")
-                                binding.loadingImage.isVisible = false
-                            }
+                                    val captureView: ImageView = binding.captureView
+                                    Glide.with(requireActivity()).load(caption.imgPath).override(1000).into(captureView)
+                                    notificationText?.text = captionResult
+                                    (activity as MainActivity).TTSrun(captionResult, "captioning")
+                                    binding.loadingImage.isVisible = false
+                                }
 
-                            override fun onFailure(call: Call<ResultTransferPapago>, t: Throwable) {
-                                Log.d("http", "papago api 통신 성공 실패 : $t")
-                            }
-                        })
+                                override fun onFailure(
+                                    call: Call<ResultTransferPapago>,
+                                    t: Throwable
+                                ) {
+                                    Log.d("http", "papago api 통신 성공 실패 : $t")
+                                }
+                            })
+                    } else {
+                        val captureView: ImageView = binding.captureView
+                        Glide.with(requireActivity()).load(caption.imgPath).override(1000).into(captureView)
+                        notificationText?.text = captionResult
+                        (activity as MainActivity).TTSrun(captionResult, "captioning")
+                        binding.loadingImage.isVisible = false
+                    }
                 }
             }
         }
@@ -160,6 +209,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
+        (activity as MainActivity).textToSpeech!!.language = Locale.KOREAN
         (activity as MainActivity).textToSpeech?.stop()
     }
 

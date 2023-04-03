@@ -20,6 +20,8 @@ data class Program(
     val programContent: String,
     @SerializedName("programCasting")
     val programCasting: List<String>,
+    @SerializedName("programLogoImg")
+    val programLogoImg: String,
 ) : Serializable
 
 
@@ -36,6 +38,10 @@ data class CaptionRequest(
 data class Caption(
     @SerializedName("result")
     val result: String,
+    @SerializedName("names")
+    val names: String,
+    @SerializedName("imgPath")
+    val imgPath: String,
 ) : Serializable
 
 // papago data class
