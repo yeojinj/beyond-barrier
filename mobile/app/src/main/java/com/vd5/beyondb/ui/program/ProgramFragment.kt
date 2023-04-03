@@ -92,7 +92,12 @@ class ProgramFragment : Fragment() {
                     programText?.text = message
                     (activity as MainActivity).TTSrun(message.toString())
                     binding.loadingImage.isVisible = false
-
+                }
+                BluetoothLeService.ACTION_GATT_PROGRAM_FAIL -> {
+                    val message = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
+                    programText?.text = message
+                    (activity as MainActivity).TTSrun(message.toString())
+                    binding.loadingImage.isVisible = false
                 }
             }
         }
@@ -128,6 +133,7 @@ class ProgramFragment : Fragment() {
     private fun makeGattUpdateIntentFilter(): IntentFilter {
         return IntentFilter().apply {
             addAction(BluetoothLeService.ACTION_GATT_PROGRAM)
+            addAction(BluetoothLeService.ACTION_GATT_PROGRAM_FAIL)
             addAction(BluetoothLeService.ACTION_REQUEST_FAIL)
         }
     }

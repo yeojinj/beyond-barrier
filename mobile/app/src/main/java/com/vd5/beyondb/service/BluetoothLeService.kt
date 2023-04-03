@@ -263,8 +263,8 @@ class BluetoothLeService: Service() {
                 //카운트 값이 15초가되면 타이머 종료
                 if(count > 60) {
                     val charaUuid = gattCharacteristic.uuid.toString()
-                    if (charaUuid == UUID_CAPTION_RESULT) broadcastUpdate(ACTION_GATT_CAPTIONING, "요청에 실패하였습니다. 재요청 해주세요.")
-                    if (charaUuid == UUID_PROGRAM_RESULT) broadcastUpdate(ACTION_GATT_PROGRAM, "요청에 실패하였습니다. 재요청 해주세요.")
+                    if (charaUuid == UUID_CAPTION_RESULT) broadcastUpdate(ACTION_GATT_CAPTIONING_FAIL, "요청에 실패하였습니다. 재요청 해주세요.")
+                    if (charaUuid == UUID_PROGRAM_RESULT) broadcastUpdate(ACTION_GATT_PROGRAM_FAIL, "요청에 실패하였습니다. 재요청 해주세요.")
                     println("[polling 요청 초과]")
                     t_timer.cancel()
                 } else if (!pollingState){
@@ -294,6 +294,11 @@ class BluetoothLeService: Service() {
             "com.vd5.bluetooth.le.ACTION_GATT_PROGRAM"
         const val ACTION_REQUEST_FAIL =
             "com.vd5.bluetooth.le.ACTION_REQUEST_FAIL"
+        const val ACTION_GATT_CAPTIONING_FAIL =
+            "com.vd5.bluetooth.le.ACTION_GATT_CAPTIONING_FAIL"
+        const val ACTION_GATT_PROGRAM_FAIL =
+            "com.vd5.bluetooth.le.ACTION_GATT_PROGRAM_FAIL"
+
 
 
         private const val STATE_DISCONNECTED = 0
