@@ -33,9 +33,6 @@ class HomeFragment : Fragment() {
         }, 200)
         val tutorialStartButton = _binding.buttonTutorial
 
-
-
-
         tutorialStartButton.setOnClickListener { tutorial() }
         return _binding.root
     }
@@ -72,44 +69,35 @@ class HomeFragment : Fragment() {
             }
         })
         setAnimatedText(textView, tutorialTexts[tutorialIndex])
-//        button.visibility = View.INVISIBLE
         button.isEnabled = false
     }
 
     fun setAnimatedText(textView: TextView, newText: String) {
-        // Create a fade-out animation
         val fadeOut = AlphaAnimation(1.0f, 0.0f)
-        fadeOut.duration = 500 // Set the duration of the animation
-        fadeOut.interpolator = AccelerateInterpolator() // Set the interpolator to accelerate
+        fadeOut.duration = 500
+        fadeOut.interpolator = AccelerateInterpolator()
 
-        // Create a fade-in animation
         val fadeIn = AlphaAnimation(0.0f, 1.0f)
-        fadeIn.duration = 500 // Set the duration of the animation
-        fadeIn.interpolator = DecelerateInterpolator() // Set the interpolator to decelerate
+        fadeIn.duration = 500
+        fadeIn.interpolator = DecelerateInterpolator()
 
-        // Create an animation set and add the fade-out and fade-in animations to it
         val animationSet = AnimationSet(false)
         animationSet.addAnimation(fadeOut)
 
-        // Set an animation listener to update the TextView's text and start the animation
         animationSet.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {
-                // This method is called when the animation starts
             }
 
             override fun onAnimationEnd(animation: Animation?) {
-                // This method is called when the animation ends
-                textView.text = newText // Set the new text for the TextView
-                textView.startAnimation(fadeIn) // Start the fade-in animation
+                textView.text = newText
+                textView.startAnimation(fadeIn)
                 (activity as MainActivity).TTSrun(newText, ttsId)
             }
 
             override fun onAnimationRepeat(animation: Animation?) {
-                // This method is called when the animation repeats (which it doesn't in this case)
             }
         })
 
-        // Start the animation
         textView.startAnimation(animationSet)
     }
 

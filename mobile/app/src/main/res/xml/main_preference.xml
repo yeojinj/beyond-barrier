@@ -6,8 +6,8 @@
     <androidx.preference.ListPreference
 
         android:key="tts_speed"
-        android:title="TTS 속도"
-        android:summary="TTS 기능의 속도를 설정하세요"
+        android:title="음성 안내 속도"
+        android:summary="음성 안내 기능의 속도를 설정하세요"
         android:entries="@array/tts_speed_entry"
         android:entryValues="@array/tts_speed_values"
         android:defaultValue="1.2"

@@ -44,7 +44,7 @@ class ProgramFragment : Fragment() {
         errorText = binding.errorMessage
 
         programText?.text = ""
-        errorText!!.visibility = android.view.View.INVISIBLE
+        errorText!!.visibility = View.INVISIBLE
 
 
         val loadingImage = binding.loadingImage
@@ -84,7 +84,7 @@ class ProgramFragment : Fragment() {
                     programText?.text = program.programName
 
                     val logoView = binding.imageLogo
-                    Glide.with(requireActivity()).load(program.programLogoImg).override(1000).into(logoView)
+                    Glide.with(requireActivity()).load(program.programLogoImg).override(700).into(logoView)
 
                     val programResult = programResult(program)
 
@@ -94,7 +94,7 @@ class ProgramFragment : Fragment() {
                 BluetoothLeService.ACTION_REQUEST_FAIL -> {
                     Log.d(TAG, "onReceive: 로고 인식 실패 fragment에서 받음")
                     val message = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
-                    errorText!!.visibility = android.view.View.VISIBLE
+                    errorText!!.visibility = View.VISIBLE
                     (activity as MainActivity).TTSrun(message.toString())
                     binding.loadingImage.isVisible = false
                 }
