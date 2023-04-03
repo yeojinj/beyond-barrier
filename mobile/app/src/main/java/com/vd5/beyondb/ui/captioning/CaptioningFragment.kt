@@ -44,7 +44,8 @@ class CaptioningFragment : Fragment(), SensorEventListener {
 
     private val TAG = "captionFragment"
     private var captioning_lang : String = "ko"
-
+    private var captioning_cast : Boolean = true
+    private var captionFlag : Boolean = true
 
 
     // PAPAGO API
@@ -61,7 +62,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private lateinit var accelerometer: Sensor
 
-    private var captionFlag = true
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,6 +72,10 @@ class CaptioningFragment : Fragment(), SensorEventListener {
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(requireContext())
         captionFlag = preferences.getBoolean("captioning_auto", true)
+        captioning_lang = preferences.getString("captioning_lang", "ko").toString()
+        captioning_cast = preferences.getBoolean("captioning_showcast", true)
+
+
 
         binding = FragmentCaptioningBinding.inflate(inflater,container,false)
 
@@ -80,7 +85,9 @@ class CaptioningFragment : Fragment(), SensorEventListener {
         notificationText = binding.captioningResult
         notificationText?.text = ""
 
-        captioning_lang = preferences.getString("captioning_lang", "ko").toString()
+
+
+
         Log.d(TAG, "onCreateView: ${(activity as MainActivity).textToSpeech!!.availableLanguages}")
         when (captioning_lang) {
             "ko" -> (activity as MainActivity).textToSpeech!!.language = Locale.KOREAN
@@ -156,7 +163,10 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                                         response.body()?.message?.result?.translatedText.toString()
                                     Log.d("http", "papago api 통신 성공 : $captionResult")
                                     val names = caption.names
-                                    if (captioning_lang == "ko" && names != "") {
+
+
+
+                                    if (captioning_cast && captioning_lang == "ko" && names != "") {
                                         captionResult += "\n\n 현재 화면에 보이는 인물은 ${names.dropLast(2)}입니다."
                                     }
                                     val captureView: ImageView = binding.captureView

@@ -49,7 +49,7 @@ class SettingsFragment :  Fragment() {
             SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences: SharedPreferences?, key: String? ->
                 when (key) {
                     "tts_speed" -> {
-                        val value = prefs.getString("tts_speed","1.0")
+                        val value = prefs.getString("tts_speed","1.2")
                         (activity as MainActivity).textToSpeech?.setSpeechRate(value!!.toFloat())
                     }
                 }
