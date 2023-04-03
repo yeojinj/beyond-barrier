@@ -49,6 +49,12 @@ class CaptioningFragment : Fragment(), SensorEventListener {
     private var captionFlag : Boolean = true
 
 
+    //view
+    private var notificationText : TextView? = null
+    private var errorText : TextView? = null
+
+
+
     // PAPAGO API
     val CLIENT_ID = "tQ1IC34NWA_W2eKoRO3p"
     val CLIENT_SECRET = "LJdUj3JuDW"
@@ -77,13 +83,15 @@ class CaptioningFragment : Fragment(), SensorEventListener {
         captioning_cast = preferences.getBoolean("captioning_showcast", true)
 
 
-
         binding = FragmentCaptioningBinding.inflate(inflater,container,false)
 
         sensorManager = context?.getSystemService(Context.SENSOR_SERVICE) as SensorManager
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
 
         notificationText = binding.captioningResult
+        errorText = binding.errorMessage
+
+        errorText!!.visibility = android.view.View.INVISIBLE
         notificationText?.text = ""
 
 
@@ -135,7 +143,6 @@ class CaptioningFragment : Fragment(), SensorEventListener {
         return binding.root
     }
 
-    private var notificationText : TextView? = null
 
     private val gattUpdateReceiver: BroadcastReceiver = object : BroadcastReceiver() {
 
@@ -194,9 +201,10 @@ class CaptioningFragment : Fragment(), SensorEventListener {
                 }
                 BluetoothLeService.ACTION_GATT_CAPTIONING_FAIL -> {
                     val failMessage = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
-                    notificationText?.text = failMessage
-                    (activity as MainActivity).TTSrun(failMessage!!, "captioning")
                     binding.loadingImage.isVisible = false
+                    errorText!!.visibility = android.view.View.VISIBLE
+                    (activity as MainActivity).TTSrun(failMessage!!, "captioning")
+
                 }
             }
         }
