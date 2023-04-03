@@ -11,5 +11,5 @@
     <string name="loading_description">로딩 중</string>
     <string name="capture_image">캡쳐된 화면</string>
     <string name="program_logo">프로그램 로고 이미지</string>
-
+    <string name="conn_error">"요청에 실패하였습니다.\n재요청 해주세요.</string>
 </resources>

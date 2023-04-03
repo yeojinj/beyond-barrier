@@ -29,6 +29,7 @@ private const val TAG = "ProgramFragment"
 
 class ProgramFragment : Fragment() {
     private var programText : TextView? = null
+    private var errorText : TextView? = null
 
     lateinit var binding : FragmentProgramBinding
 
@@ -40,7 +41,11 @@ class ProgramFragment : Fragment() {
         binding = FragmentProgramBinding.inflate(inflater,container,false)
 
         programText = binding.programResult
+        errorText = binding.errorMessage
+
         programText?.text = ""
+        errorText!!.visibility = android.view.View.INVISIBLE
+
 
         val loadingImage = binding.loadingImage
         val animated = AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.progress_bar)
@@ -89,13 +94,14 @@ class ProgramFragment : Fragment() {
                 BluetoothLeService.ACTION_REQUEST_FAIL -> {
                     Log.d(TAG, "onReceive: 로고 인식 실패 fragment에서 받음")
                     val message = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
-                    programText?.text = message
+                    errorText!!.visibility = android.view.View.VISIBLE
                     (activity as MainActivity).TTSrun(message.toString())
                     binding.loadingImage.isVisible = false
                 }
                 BluetoothLeService.ACTION_GATT_PROGRAM_FAIL -> {
                     val message = intent.getStringExtra(NfcAdapter.EXTRA_DATA)
-                    programText?.text = message
+                    errorText!!.visibility = android.view.View.VISIBLE
+
                     (activity as MainActivity).TTSrun(message.toString())
                     binding.loadingImage.isVisible = false
                 }
