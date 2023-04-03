@@ -480,7 +480,7 @@ def image_caption():
         f = request.files['file']
         f.save('/home/jupyter-j8s0051/server/static/imagecaption/' + f.filename)
         result = inference('/home/jupyter-j8s0051/server/static/imagecaption/' + f.filename)
-        
+
         return result
     
     
