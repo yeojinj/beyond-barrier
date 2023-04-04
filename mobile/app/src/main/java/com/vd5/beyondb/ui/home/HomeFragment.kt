@@ -38,12 +38,12 @@ class HomeFragment : Fragment() {
     }
 
     private val tutorialTexts = arrayOf(
-        "안녕하세요. beyond barrier입니다.",
+        "안녕하세요. \nbeyond barrier입니다.",
         "beyond barrier는 시각장애인을 위한 TV화면 해설 서비스입니다.",
         "두 번째 메뉴를 누르면 현재 프로그램에 대한 정보를 알 수 있습니다.",
         "세 번째 메뉴를 누르면 현재 화면에 대한 설명을 들을 수 있습니다.",
-        "네 번째 메뉴에서는 설정을 변경할 수 있습니다.",
-        "그럼 지금부터 beyond barrier를 이용해 보세요."
+        "네 번째 메뉴에서는 \n설정을 변경할 수 있습니다.",
+        "그럼 지금부터 beyond barrier를 \n이용해 보세요."
     )
     private var tutorialIndex = 0
     private val ttsId = "tutorialTTS"
