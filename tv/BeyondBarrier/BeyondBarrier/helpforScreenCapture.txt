@@ -1,0 +1,38 @@
+ScreenCapture 메소드 관련.
+
+안녕하세요, ScreenCapture 메소드에 관해 설명문을 작성하였습니다.
+
+
+##주의!!
+제가 현재 ScreenCapture 의 동작 방식이 어떤 방식인지 몰라
+async task 함수의 형태로 구조를 만들어 두었습니다.
+혹시라도 async 구조가 아니라면
+그냥 string을 return하는 함수로 변형해주시면 될 것 같습니다...
+
+
+------본문------
+
+BeyondBarrier_App.cs 코드의 
+
+line 134, ScreenCapture 함수를 만들어 주시면 됩니다
+
+이후 line 187 의
+'string CaptureImagePath = @"/opt/usr/globalapps/org.tizen.example.BeyondBarrier/res/savedPics/capture.jpg";'
+를 지워주시고
+line 186의
+//string CaptureImagePath = await ScreenCapture("capture");
+의 주석을 해제해주세요
+(async 함수가 아니라면 await도 지워주세요)
+
+또한 line 254 의
+'string ProgramInfoImagePath = @"/opt/usr/globalapps/org.tizen.example.BeyondBarrier/res/savedPics/programInfo.png";'
+를 지워주시고
+line 256의
+//string ProgramInfoImagePath = await ScreenCapture("programInfo");
+의 주석을 해제해주세요
+(async 함수가 아니라면 await도 지워주세요)
+
+------------
+
+감사합니다.
+좋은 하루 보내세요

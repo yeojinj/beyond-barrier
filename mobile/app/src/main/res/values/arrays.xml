@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="tts_speed_entry">
+        <item>느린 속도</item>
+        <item>보통 속도</item>
+        <item>빠른 속도</item>
+    </string-array>
+
+    <string-array name="tts_speed_values">
+        <item>1.2</item>
+        <item>1.8</item>
+        <item>2.6</item>
+    </string-array>
+
+    <string-array name="captioning_lang_entry">
+        <item>한글</item>
+        <item>영어</item>
+        <item>일본어</item>
+        <item>중국어</item>
+        <item>불어</item>
+    </string-array>
+
+    <string-array name="captioning_lang_values">
+        <item>ko</item>
+        <item>en</item>
+        <item>ja</item>
+        <item>zh-CN</item>
+        <item>fr</item>
+    </string-array>
+
+    <string-array name="captioning_interval_entry">
+        <item>no</item>
+        <item>yes</item>
+    </string-array>
+
+    <string-array name="captioning_interval_values">
+        <item>sss</item>
+        <item>yyy</item>
+    </string-array>
+
+
+</resources>

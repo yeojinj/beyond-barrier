@@ -1,0 +1,5 @@
+﻿################################################################################
+# 이 .gitignore 파일은 Microsoft(R) Visual Studio에서 자동으로 만들어졌습니다.
+################################################################################
+
+/tv/BeyondBarrier/BeyondBarrier/bin/Debug/tizen10.0/tpkroot/res/accesscode.json
