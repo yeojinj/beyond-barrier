@@ -88,7 +88,8 @@ namespace BeyondBarrier
             public BeyondBarrierBleServer()
             {
                 //ready for S3 keys. and S3's file name prefix/suffix
-                string json = File.ReadAllText("/opt/usr/globalapps/org.tizen.example.BeyondBarrier/res/accesscode.json");
+               
+                string json = File.ReadAllText(Application.Current.DirectoryInfo.Resource + "accesscode.json");
                 JsonDocument doc = JsonDocument.Parse(json);
                 JsonElement root = doc.RootElement;
                 S3AccessKey = root.GetProperty("AccessKey").GetString();

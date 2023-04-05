@@ -4,7 +4,7 @@ C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroo
 C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\bin\AWSSDK.S3.dll
 C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\bin\Microsoft.Bcl.AsyncInterfaces.dll
 C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\BeyondBarrier.deps.json
-C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\res\accessCode.json
+C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\res\accesscode.json
 C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\res\savedPics\capture.jpg
 C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\res\savedPics\programInfo.png
 C:\repos\VD\S08P21S005\tv\BeyondBarrier\BeyondBarrier\bin\Debug\tizen10.0\tpkroot\shared\res\BeyondBarrier.png
