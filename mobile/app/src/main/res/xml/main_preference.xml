@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.preference.ListPreference
+
+        android:key="tts_speed"
+        android:title="음성 안내 속도"
+        android:summary="음성 안내 기능의 속도를 설정하세요"
+        android:entries="@array/tts_speed_entry"
+        android:entryValues="@array/tts_speed_values"
+        android:defaultValue="1.2"
+        android:icon="@drawable/ic_tts_speed"
+
+        />
+
+
+    <androidx.preference.ListPreference
+        android:key="captioning_lang"
+        android:title="화면 해설 언어"
+        android:summary="화면 해설 기능의 언어를 설정하세요"
+        android:entries="@array/captioning_lang_entry"
+        android:entryValues="@array/captioning_lang_values"
+        android:defaultValue="ko"
+        android:icon="@drawable/ic_font_size"
+        />
+
+
+    <androidx.preference.SwitchPreference
+        android:key="captioning_auto"
+        android:summaryOff="화면 해설 기능이 한번만 실행됩니다"
+        android:summaryOn="화면 해설 기능이 반복되어 실행됩니다"
+        android:title="연속 화면 해설"
+        android:icon="@drawable/ic_replay"
+        />
+
+    <androidx.preference.SwitchPreference
+        android:key="captioning_showcast"
+        android:summaryOff="화면 해설에 출연진을 표시하지 않습니다"
+        android:summaryOn="화면 해설 출연진을 표시합니다"
+        android:title="화면 해설 출연진 표시"
+        android:icon="@drawable/ic_captioning_cast"
+        />
+
+
+</androidx.preference.PreferenceScreen>
