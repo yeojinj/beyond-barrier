@@ -4,7 +4,7 @@
     <SignatureMethod Algorithm="http://www.w3.org/2001/04/xmldsig-more#rsa-sha512" />
     <Reference URI="tizen-manifest.xml">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>unffsJ5zP2k/uaGfaPRuk3icfVUwnVreVM7fxUT/oU2xNvC8YG7z3kLataXHXlZKroVT0HFDct9oCGovJ25xUA==</DigestValue>
+      <DigestValue>MCgahrR9CnFdzmtwTgLSOBtdUXthJOl3aH8sRW0hDuS+QPAvGrV2kdw6dUIqBf+R6uD4OHfdvjTYknfvovkXeg==</DigestValue>
     </Reference>
     <Reference URI="shared%2Fres%2FBeyondBarrier.png">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
@@ -16,9 +16,9 @@
     </Reference>
     <Reference URI="res%2FsavedPics%2Fcapture.jpg">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>kthUsY+Hgqm9EwYsmWLDDcmXtpbogROI9K2/HL/7sLcBbneQ0WS6OD5xiA+Hp9FNQRruO1/k1bix2s4N41tmPA==</DigestValue>
+      <DigestValue>AC548QFzT3DMbGx7Zsm9IUJ6lQv98xNXIOzjYkRjGKPzOb5DZys8q4tJAB9FXK5dVL5jPvP7qYERoC5+d6Tkzw==</DigestValue>
     </Reference>
-    <Reference URI="res%2Faccesscode.json">
+    <Reference URI="res%2FaccessCode.json">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
       <DigestValue>yAhle9Ht1NQcEBB72O27GrNZbDCpDkiIiWzud0htbaOeFivTBq3JYe88Weif2skIMjpqLR+ihXMdOM38WCpMZQ==</DigestValue>
     </Reference>
@@ -28,11 +28,11 @@
     </Reference>
     <Reference URI="bin%2FBeyondBarrier.pdb">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>Z/2c3yTWOGr6ZvPGFJAGigUpXa4JCetU5T/v+QuUZrnchStCgF7jI9l43SsRZgtx5kLIDk6jvWKVA426lH3pcg==</DigestValue>
+      <DigestValue>7iKrj10V71JDLlrE20x+nAaZo1OUtNigvjrY7e2+bN54FWyRU+fkqepVQKkonY8JlzproWHB1ZIluSlxJcfQwg==</DigestValue>
     </Reference>
     <Reference URI="bin%2FBeyondBarrier.dll">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>QQtWcKowNBrFui5U8vNE6g6mMgTTC1Hce64e+cB+Y6SEoux0CX8ALEfv/jmUfcE0F0kZTrJ0IW0gVoApPK6rKw==</DigestValue>
+      <DigestValue>RGLmffItbjl1+qFCVGvhmrau5a1UZ221c6E9s9+lmbksLsG+bL2a01YZbKpaQTIM6WHFxIb2klplguswfi/UrQ==</DigestValue>
     </Reference>
     <Reference URI="bin%2FAWSSDK.S3.dll">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
@@ -48,7 +48,7 @@
     </Reference>
     <Reference URI="author-signature.xml">
       <DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512" />
-      <DigestValue>fGrdpatCsFMGM2vlhlusL6Byue1p1W7anb9l2Ps5Nvvfs7ZOFVfjJ6T8A6ewSkY65gFYJtMSuqKm/GJPhcFkUQ==</DigestValue>
+      <DigestValue>oGuo1lADXV+MWbB9CEPJ2+uh+dxTncshNB59/27RTm6IpzbrhX19Tb+/1pURc61mcHR/bGZHHJbprRnmTIwpTA==</DigestValue>
     </Reference>
     <Reference URI="#prop">
       <Transforms>
@@ -59,9 +59,9 @@
     </Reference>
   </SignedInfo>
   <SignatureValue>
-BrTFfUWRkNS2tbuoP4llXWWnpbWZRO/CB6O2rOW798waww4jcj+SmK3PgPZKrqT96lu0VZQ7Kaeg
-y1o5K2b3yJHpz0u/yU2O4qGQdcyDxjxKj9QtMPI3CPJAAj4jj2fkW8h0reSI/Y5JspE+GKUNcQxT
-1vG65ut6Go8NgUjdleI=
+nU6QMFabDWljOhlU5qe2nOAzS6gSPvkDFZfWyB14tyrqFG3OEZI0cwxfYvBgRvdV5wtWVnzs3J4N
+MvxF1lEHrx9CqmB6+bY+PzHAqvxH8KNxQUTJa6J8RLqzm8hqmCqW3IeY7iBn30VNN5Y7xWT+hheg
+5/cAQLDnIEjIKVfjjTE=
 </SignatureValue>
   <KeyInfo>
     <X509Data>
