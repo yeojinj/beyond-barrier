@@ -174,7 +174,7 @@ class CaptioningFragment : Fragment(), SensorEventListener {
 
 
 
-                                    if (captioning_cast && captioning_lang == "ko" && names != "") {
+                                    if (captioning_cast && captioning_lang == "ko" && names != null) {
                                         captionResult += "\n\n 현재 화면에 보이는 인물은 ${names.dropLast(2)}입니다."
                                     }
                                     val captureView: ImageView = binding.captureView
